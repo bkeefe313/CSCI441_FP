@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="A5"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="A5">
+				<Option output="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug/A5" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/benkeefe/OpenGL/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 A5"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="A5/fast">
+				<Option output="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug/A5" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/benkeefe/OpenGL/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 A5/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/benkeefe/Downloads/SaulGoodman_A3\ 2/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/A5Engine.cpp">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/A5Engine.hpp">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/ArcballCam.h">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/Player.cpp">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/Player.h">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/main.cpp">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/Enemy.cpp">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/Enemy.h">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/StaticObject.cpp">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/StaticObject.h">
+			<Option target="A5"/>
+		</Unit>
+		<Unit filename="/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
