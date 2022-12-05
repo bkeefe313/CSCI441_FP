@@ -344,7 +344,7 @@ void FPEngine::_setupBuffers() {
                        _texShaderProgram->getAttributeLocation("vNormal"),
                        _texShaderProgram->getAttributeLocation("vTexCoord"));
 
-    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/suzanne.obj");
+    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/WhenTheImposterIsSus.obj");
     _models[Models::ENEMY]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                        _texShaderProgram->getAttributeLocation("vNormal"),
                                        _texShaderProgram->getAttributeLocation("vTexCoord"));
@@ -384,7 +384,9 @@ void FPEngine::_setupScene() {
     _player->_position = glm::vec3(50, 0, 50);
     _flashlight->_position = _player->_position;
 
-    _populateScene(256, 10);
+    _populateScene(512, 10);
+
+    _spawnEnemy(1);
 
 }
 
@@ -610,9 +612,15 @@ void FPEngine::run() {
 
 void FPEngine::_checkCollisions() {
     for(int i = 0; i < _numEnemies; i++) {
-        if(length(_enemies[i]->_position - _player->_position) < _enemies[i]->_scale.x/2.0f) {
+        if(length(_enemies[i]->_position - _player->_position) < _enemies[i]->_scale.x) {
             _gameOver = true;
             _gameOverMessage = "YOU DIED";
+        }
+        if(length(_enemies[i]->_position - _player->_position) < 200.0f &&
+            abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.75){
+            _enemies[i]->_speed = 1.0f;
+        } else {
+            _enemies[i]->_speed = 0.3f;
         }
     }
 
@@ -658,12 +666,8 @@ void FPEngine::_checkCollisions() {
         }
         for(int j = 0; j < _numTrees; j++) {
             if(abs(length(_enemies[i]->_position - _trees[j]->_position)) < 12) {
-                _numEnemies--;
-                if(i < _numEnemies){
-                    _enemies[i] = _enemies[_numEnemies];
-                    _enemies[_numEnemies] = nullptr;
-                    break;
-                }
+                glm::vec3 opposite = _enemies[i]->_position - _trees[i]->_position;
+                _enemies[i]->_position += glm::normalize(glm::vec3(opposite.x, 0, opposite.z));
             }
         }
     }
@@ -752,7 +756,7 @@ void FPEngine::_spawnEnemy(int n) {
         }
         glm::vec3 randPos((rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE, 0, (rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE);
         std::cout << "Spawned enemy at: ( " << randPos.x << ", " << randPos.z << " ). " << "There are now " << _numEnemies << " enemies." << std::endl;
-        _enemies[_numEnemies - 1] = new Enemy(_models[Models::ENEMY], randPos, glm::vec3(3));
+        _enemies[_numEnemies - 1] = new Enemy(_models[Models::ENEMY], randPos, glm::vec3(10));
     }
 }
 

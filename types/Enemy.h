@@ -21,7 +21,7 @@ public:
         _heading = glm::vec3(0,0,1);
         _health = 100;
         _maxHealth = 100;
-        _speed = 0.3f;
+        _speed = 0.2f;
         _targetPosition = glm::vec3(0);
         _attackDmg = 1;
         _rotation = 0;
