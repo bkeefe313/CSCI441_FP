@@ -515,7 +515,7 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
                                           _textureShaderUniformLocations.mvpMatrix,
                                           _textureShaderUniformLocations.modelMtx,
                                           _textureShaderUniformLocations.normMatrix);
-    CSCI441::drawSolidSphere(0.5, 16, 16);
+    CSCI441::drawSolidSphere(0.4, 16, 16);
 
 
 
@@ -550,9 +550,10 @@ void FPEngine::_updateScene() {
         _player->_position = glm::vec3(_player->_position.x, evalSurface(_player->_position.x, _player->_position.z).y, _player->_position.z);
 
     for(int i = 0; i < _numEnemies; i++) {
-        if(glm::length(_enemies[i]->_position - _player->_position) < 250.0f)
+        if(glm::length(_enemies[i]->_position - _player->_position) < 350.0f) {
             _enemies[i]->calculateTrajectory(_player->_position);
             _enemies[i]->move();
+        }
         _enemies[i]->_position = glm::vec3(_enemies[i]->_position.x, evalSurface(_enemies[i]->_position.x, _enemies[i]->_position.z).y, _enemies[i]->_position.z);
     }
 
@@ -566,7 +567,7 @@ void FPEngine::_updateScene() {
     _checkCollisions();
 
 
-    if(_player->_position.y < -500) {
+    if(_player->_position.y < -300) {
         _gameOver = true;
         _gameOverMessage = "YOU DIED";
     }
@@ -626,10 +627,10 @@ void FPEngine::_checkCollisions() {
             _gameOverMessage = "YOU DIED";
         }
         if(length(_enemies[i]->_position - _player->_position) < 300.0f &&
-            abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.85){
-            _enemies[i]->_speed = 1.5f;
+            abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.8f){
+            _enemies[i]->_speed = 1.3f;
         } else {
-            _enemies[i]->_speed = 0.3f;
+            _enemies[i]->_speed = 0.5f;
         }
     }
 
