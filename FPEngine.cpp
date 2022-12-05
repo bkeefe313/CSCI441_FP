@@ -207,7 +207,7 @@ void FPEngine::_setupOpenGL() {
 void FPEngine::_setupShaders() {
 
     _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.0));
-    _flashlight = new Light(glm::vec3(0,0,0), glm::vec3(0,0,1), 0.4f, glm::vec3(0.5f, 0.5f, 0.5f));
+    _flashlight = new Light(glm::vec3(0,0,0), glm::vec3(0,0,1), 0.8f, glm::vec3(0.5f, 0.5f, 0.5f));
 
     _texShaderProgram = new CSCI441::ShaderProgram("./shaders/textureShader.v.glsl",
                                                       "./shaders/textureShader.f.glsl");
@@ -375,7 +375,7 @@ void FPEngine::_setupTextures() {
 
 void FPEngine::_setupScene() {
     _cam->setPosition(glm::vec3(0, 10, 0));
-    _cam->setRadius(20.0f);
+    _cam->setRadius(25.0f);
     _cam->setTheta(0.1 );
     _cam->setPhi(0.1 );
     _cam->_target = _player;
@@ -384,7 +384,7 @@ void FPEngine::_setupScene() {
     _player->_position = glm::vec3(50, 0, 50);
     _flashlight->_position = _player->_position;
 
-    _populateScene(256, 20);
+    _populateScene(256, 10);
 
 }
 
@@ -521,12 +521,14 @@ void FPEngine::_updateScene() {
     if(abs(_player->_walkSpeed) > 0 || abs(_player->_strafeSpeed) > 0)
         _player->updateDirection(_cam->getPosition());
 
+
     /*
     if(glfwGetTime() - _lastSpawnTime > 5) {
         _lastSpawnTime = glfwGetTime();
         _spawnEnemy(25);
     }
      */
+
 
     //make player fall of world edge
     if(_player->_position.x > WORLD_SIZE  || _player->_position.z > WORLD_SIZE ||

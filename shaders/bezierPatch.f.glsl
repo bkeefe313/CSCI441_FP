@@ -47,7 +47,7 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
 	vec3 viewDir = normalize(camPos - pos);
 	vec3 halfway = normalize(viewDir + lightVector);
 
-	vec3 i_d =  lightColor * tessColorOut * max(dot(vertNorm, lightVector), 0.0);
+	vec3 i_d =  lightColor * tessColorOut * max(dot(vertNorm, lightVector), 0.5);
 
 	// perform specular calculations
 	vec3 i_s = lightColor * tessColorOut * pow(max(dot(vertNorm, halfway), 0.0), 4.0);
@@ -64,7 +64,7 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
 	vec3 i_a = tessColorOut * vec3(0.1);
 
 	//add together components
-	return (i_d + i_s + i_a) / (length(lightPos - pos)/10.0);
+	return (i_d + i_s + i_a) / (length(lightPos - pos)/20.0);
 }
 
 // ***** FRAGMENT SHADER MAIN FUNCTION *****
