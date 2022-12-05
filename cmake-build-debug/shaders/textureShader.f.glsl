@@ -17,4 +17,7 @@ void main() {
 
     // write the color to the output
     fragColorOut = vec4(color, 1)*texColor;
+
+    if(fragColorOut.x == 0 && fragColorOut.y == 0 && fragColorOut.z == 0)
+        discard;
 }

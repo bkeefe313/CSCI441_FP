@@ -36,10 +36,10 @@ void main() {
     gl_out[ gl_InvocationID ].gl_Position = gl_in[ gl_InvocationID ].gl_Position;
 
     //specify outer and inner tessellation levels
-    gl_TessLevelOuter[0] = 20.0f;
-    gl_TessLevelOuter[1] = 20.0f;
-    gl_TessLevelOuter[2] = 20.0f;
-    gl_TessLevelOuter[3] = 20.0f;
-    gl_TessLevelInner[0] = 20.0f;
-    gl_TessLevelInner[1] = 20.0f;
+    gl_TessLevelOuter[0] = 30.0f;
+    gl_TessLevelOuter[1] = 30.0f;
+    gl_TessLevelOuter[2] = 30.0f;
+    gl_TessLevelOuter[3] = 30.0f;
+    gl_TessLevelInner[0] = 30.0f;
+    gl_TessLevelInner[1] = 30.0f;
 }

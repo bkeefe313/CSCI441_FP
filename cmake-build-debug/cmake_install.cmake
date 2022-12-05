@@ -1,4 +1,4 @@
-# Install script for directory: /Users/benkeefe/Downloads/SaulGoodman_A3 2/src
+# Install script for directory: /Users/benkeefe/Desktop/CSCI441_FP
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/benkeefe/Desktop/CSCI441_FP/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

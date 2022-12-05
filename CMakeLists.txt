@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(A5)
+project(FP)
 set(CMAKE_CXX_STANDARD 17)
-set(SOURCE_FILES main.cpp A5Engine.cpp A5Engine.hpp Player.cpp Player.h ArcballCam.h types/StaticObject.cpp types/StaticObject.h types/Enemy.cpp types/Enemy.h)
+set(SOURCE_FILES main.cpp FPEngine.cpp FPEngine.hpp Player.cpp Player.h ArcballCam.h types/StaticObject.cpp types/StaticObject.h types/Enemy.cpp types/Enemy.h)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 # Windows with MinGW Installations

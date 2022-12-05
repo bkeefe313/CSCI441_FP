@@ -57,10 +57,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/Users/benkeefe/Downloads/SaulGoodman_A3 2/src"
+CMAKE_SOURCE_DIR = /Users/benkeefe/Desktop/CSCI441_FP
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug"
+CMAKE_BINARY_DIR = /Users/benkeefe/Desktop/CSCI441_FP/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug/CMakeFiles" "/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug//CMakeFiles/progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/benkeefe/Desktop/CSCI441_FP/cmake-build-debug/CMakeFiles /Users/benkeefe/Desktop/CSCI441_FP/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/cmake-build-debug/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/benkeefe/Desktop/CSCI441_FP/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,48 +117,48 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named A5
+# Target rules for targets named FP
 
 # Build rule for target.
-A5: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 A5
-.PHONY : A5
+FP: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FP
+.PHONY : FP
 
 # fast build rule for target.
-A5/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/build
-.PHONY : A5/fast
+FP/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/build
+.PHONY : FP/fast
 
-A5Engine.o: A5Engine.cpp.o
-.PHONY : A5Engine.o
+FPEngine.o: FPEngine.cpp.o
+.PHONY : FPEngine.o
 
 # target to build an object file
-A5Engine.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/A5Engine.cpp.o
-.PHONY : A5Engine.cpp.o
+FPEngine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/FPEngine.cpp.o
+.PHONY : FPEngine.cpp.o
 
-A5Engine.i: A5Engine.cpp.i
-.PHONY : A5Engine.i
+FPEngine.i: FPEngine.cpp.i
+.PHONY : FPEngine.i
 
 # target to preprocess a source file
-A5Engine.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/A5Engine.cpp.i
-.PHONY : A5Engine.cpp.i
+FPEngine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/FPEngine.cpp.i
+.PHONY : FPEngine.cpp.i
 
-A5Engine.s: A5Engine.cpp.s
-.PHONY : A5Engine.s
+FPEngine.s: FPEngine.cpp.s
+.PHONY : FPEngine.s
 
 # target to generate assembly for a file
-A5Engine.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/A5Engine.cpp.s
-.PHONY : A5Engine.cpp.s
+FPEngine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/FPEngine.cpp.s
+.PHONY : FPEngine.cpp.s
 
 Player.o: Player.cpp.o
 .PHONY : Player.o
 
 # target to build an object file
 Player.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/Player.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/Player.cpp.o
 .PHONY : Player.cpp.o
 
 Player.i: Player.cpp.i
@@ -166,7 +166,7 @@ Player.i: Player.cpp.i
 
 # target to preprocess a source file
 Player.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/Player.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/Player.cpp.i
 .PHONY : Player.cpp.i
 
 Player.s: Player.cpp.s
@@ -174,7 +174,7 @@ Player.s: Player.cpp.s
 
 # target to generate assembly for a file
 Player.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/Player.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/Player.cpp.s
 .PHONY : Player.cpp.s
 
 main.o: main.cpp.o
@@ -182,7 +182,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -190,7 +190,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -198,7 +198,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 types/Enemy.o: types/Enemy.cpp.o
@@ -206,7 +206,7 @@ types/Enemy.o: types/Enemy.cpp.o
 
 # target to build an object file
 types/Enemy.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/types/Enemy.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/types/Enemy.cpp.o
 .PHONY : types/Enemy.cpp.o
 
 types/Enemy.i: types/Enemy.cpp.i
@@ -214,7 +214,7 @@ types/Enemy.i: types/Enemy.cpp.i
 
 # target to preprocess a source file
 types/Enemy.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/types/Enemy.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/types/Enemy.cpp.i
 .PHONY : types/Enemy.cpp.i
 
 types/Enemy.s: types/Enemy.cpp.s
@@ -222,7 +222,7 @@ types/Enemy.s: types/Enemy.cpp.s
 
 # target to generate assembly for a file
 types/Enemy.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/types/Enemy.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/types/Enemy.cpp.s
 .PHONY : types/Enemy.cpp.s
 
 types/StaticObject.o: types/StaticObject.cpp.o
@@ -230,7 +230,7 @@ types/StaticObject.o: types/StaticObject.cpp.o
 
 # target to build an object file
 types/StaticObject.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/types/StaticObject.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/types/StaticObject.cpp.o
 .PHONY : types/StaticObject.cpp.o
 
 types/StaticObject.i: types/StaticObject.cpp.i
@@ -238,7 +238,7 @@ types/StaticObject.i: types/StaticObject.cpp.i
 
 # target to preprocess a source file
 types/StaticObject.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/types/StaticObject.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/types/StaticObject.cpp.i
 .PHONY : types/StaticObject.cpp.i
 
 types/StaticObject.s: types/StaticObject.cpp.s
@@ -246,7 +246,7 @@ types/StaticObject.s: types/StaticObject.cpp.s
 
 # target to generate assembly for a file
 types/StaticObject.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/A5.dir/build.make CMakeFiles/A5.dir/types/StaticObject.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FP.dir/build.make CMakeFiles/FP.dir/types/StaticObject.cpp.s
 .PHONY : types/StaticObject.cpp.s
 
 # Help Target
@@ -257,10 +257,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... A5"
-	@echo "... A5Engine.o"
-	@echo "... A5Engine.i"
-	@echo "... A5Engine.s"
+	@echo "... FP"
+	@echo "... FPEngine.o"
+	@echo "... FPEngine.i"
+	@echo "... FPEngine.s"
 	@echo "... Player.o"
 	@echo "... Player.i"
 	@echo "... Player.s"

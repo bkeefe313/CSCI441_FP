@@ -6,9 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/A5Engine.cpp
+/Users/benkeefe/Desktop/CSCI441_FP/A5Engine.cpp
 A5Engine.hpp
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/A5Engine.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/A5Engine.hpp
 CSCI441/objects.hpp
 -
 CSCI441/materials.hpp
@@ -20,9 +20,9 @@ string
 iostream
 -
 stb_image.h
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/stb_image.h
+/Users/benkeefe/Desktop/CSCI441_FP/stb_image.h
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/A5Engine.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/A5Engine.hpp
 CSCI441/FreeCam.hpp
 -
 CSCI441/ModelLoader.hpp
@@ -30,31 +30,31 @@ CSCI441/ModelLoader.hpp
 CSCI441/OpenGLEngine.hpp
 -
 Player.h
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/Player.h
+/Users/benkeefe/Desktop/CSCI441_FP/Player.h
 ArcballCam.h
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/ArcballCam.h
+/Users/benkeefe/Desktop/CSCI441_FP/ArcballCam.h
 Light.hpp
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/Light.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/Light.hpp
 types/Enemy.h
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/Enemy.h
+/Users/benkeefe/Desktop/CSCI441_FP/types/Enemy.h
 types/StaticObject.h
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/StaticObject.h
+/Users/benkeefe/Desktop/CSCI441_FP/types/StaticObject.h
 CSCI441/ShaderProgram.hpp
 -
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/ArcballCam.h
+/Users/benkeefe/Desktop/CSCI441_FP/ArcballCam.h
 CSCI441/Camera.hpp
 -
 Player.h
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/Player.h
+/Users/benkeefe/Desktop/CSCI441_FP/Player.h
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/Light.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/Light.hpp
 glm/vec3.hpp
 -
 GL/glew.h
 -
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/Player.h
+/Users/benkeefe/Desktop/CSCI441_FP/Player.h
 glm/ext/scalar_constants.hpp
 -
 CSCI441/ShaderProgram.hpp
@@ -64,9 +64,9 @@ glm/ext/matrix_transform.hpp
 CSCI441/objects.hpp
 -
 include/CSCI441/ModelLoader.hpp
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/include/CSCI441/ModelLoader.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/include/CSCI441/ModelLoader.hpp
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/include/CSCI441/ModelLoader.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/include/CSCI441/ModelLoader.hpp
 GL/glew.h
 -
 glm/glm.hpp
@@ -94,17 +94,17 @@ time.h
 CSCI441/modelMaterial.hpp
 -
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/Enemy.h
+/Users/benkeefe/Desktop/CSCI441_FP/types/Enemy.h
 CSCI441/ShaderProgram.hpp
 -
 glm/ext/matrix_transform.hpp
 -
 ../include/CSCI441/ModelLoader.hpp
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/include/CSCI441/ModelLoader.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/include/CSCI441/ModelLoader.hpp
 iostream
 -
 
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/types/StaticObject.h
+/Users/benkeefe/Desktop/CSCI441_FP/types/StaticObject.h
 glm/glm.hpp
 -
 GL/glew.h
@@ -114,7 +114,7 @@ glm/ext/matrix_transform.hpp
 CSCI441/ShaderProgram.hpp
 -
 ../include/CSCI441/ModelLoader.hpp
-/Users/benkeefe/Downloads/SaulGoodman_A3 2/src/include/CSCI441/ModelLoader.hpp
+/Users/benkeefe/Desktop/CSCI441_FP/include/CSCI441/ModelLoader.hpp
 
 /Users/benkeefe/OpenGL/include/CSCI441/Camera.hpp
 GL/glew.h

@@ -24,10 +24,6 @@ layout( quads, equal_spacing, ccw ) in;
 uniform mat4 mvpMatrix;
 uniform mat4 modelMtx;
 
-// point light uniforms
-uniform vec3 pointLightPos;
-uniform vec3 pointLightColor;
-
 //camera position uniform
 uniform vec3 camPos;
 
@@ -36,7 +32,10 @@ uniform vec3 camPos;
 // ***** TESSELLATION EVALUATION SHADER OUTPUT *****
 // TODO #J: create varying output
 out vec3 tessColorOut;
+out vec3 tessNormal;
+out vec3 tessPos;
 
+vec3 matColor = vec3(0.25, 0.75, 0.1);
 
 // ***** TESSELLATION EVALUATION SHADER HELPER FUNCTIONS *****
 vec4 evalBezierCurve(vec4 p0, vec4 p1, vec4 p2, vec4 p3, float t) {
@@ -78,35 +77,12 @@ void main() {
     // TODO #I: output bezier point
     gl_Position = mvpMatrix * bezierPoint;
 
-    vec3 matColor = vec3(0.25, 0.75, 0.1);
-
     vec4 preNorm = getBezierTangent(evalBezierCurve(p00, p01, p02, p03, u), evalBezierCurve(p04, p05, p06, p07, u),
                                   evalBezierCurve(p08, p09, p10, p11, u), evalBezierCurve(p12, p13, p14, p15, u), v);
     vec3 normal = vec3(-preNorm.x, preNorm.y, -preNorm.z);
 
-    vec4 transformedPos = bezierPoint;
-    vec3 pos = vec3(transformedPos.x, transformedPos.y, transformedPos.z);
-
-    vec3 pointLightRefl = normalize(pointLightPos - pos);
-
-    //compute attenutations
-    float pointAttenuation = length(pos - pointLightPos) / 4.0;
-
-    //compute view dir
-    vec3 viewDir = normalize(camPos - pos);
-    vec3 halfway = normalize(viewDir + pointLightRefl);
-
-    vec3 i_d =  pointLightColor * matColor * max(dot(normal, pointLightRefl), 0.0);
-
-    // perform specular calculations
-    vec3 i_s = pointLightColor * (matColor/4) * pow(max(dot(normal, halfway), 0.0), 4.0);
-
-    //perform ambient calculation
-    vec3 i_a = vec3(0.4) * matColor;
-
-    //add together components
-    vec3 i_tot = i_d + i_s + i_a;
-
     // TODO #K: set the varying value
-    tessColorOut = i_tot;
+    tessColorOut = matColor;
+    tessNormal = normal;
+    tessPos = vec3(bezierPoint.x, bezierPoint.y, bezierPoint.z);
 }

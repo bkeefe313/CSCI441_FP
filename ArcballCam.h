@@ -25,7 +25,8 @@ public:
         y = _radius*cos(_phi);
 
         setPosition(glm::vec3(x, y, z) + _target->_position);
-        setLookAtPoint(_target->_position + glm::vec3(0, 10, 0));
+        setLookAtPoint(_target->_position + glm::vec3(0, 10, 0)
+                        + 3.0f*glm::normalize(glm::cross(_target->_forward, glm::vec3(0, 1, 0))));
         computeViewMatrix();
     }
 
