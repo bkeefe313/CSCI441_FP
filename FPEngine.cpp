@@ -24,6 +24,7 @@ FPEngine::FPEngine()
     _numEnemies = 0;
     _numTrees = 0;
     _numCoins = 0;
+    _pingDir = glm::vec3(0);
 }
 
 FPEngine::~FPEngine() {
@@ -375,7 +376,7 @@ void FPEngine::_setupTextures() {
 
 void FPEngine::_setupScene() {
     _cam->setPosition(glm::vec3(0, 10, 0));
-    _cam->setRadius(25.0f);
+    _cam->setRadius(32.0f);
     _cam->setTheta(0.1 );
     _cam->setPhi(0.1 );
     _cam->_target = _player;
@@ -508,6 +509,14 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         _coins[i]->draw(_texShaderProgram);
     }
 
+    glBindTexture(GL_TEXTURE_2D, _textures[Textures::RED]);
+    modelMtx = glm::translate(glm::mat4(1), _player->_position + 8.0f*_pingDir + glm::vec3(0, 10, 0));
+    _computeAndSendTransformationMatrices(_texShaderProgram, modelMtx, viewMtx, projMtx,
+                                          _textureShaderUniformLocations.mvpMatrix,
+                                          _textureShaderUniformLocations.modelMtx,
+                                          _textureShaderUniformLocations.normMatrix);
+    CSCI441::drawSolidSphere(0.5, 16, 16);
+
 
 
 }
@@ -541,9 +550,9 @@ void FPEngine::_updateScene() {
         _player->_position = glm::vec3(_player->_position.x, evalSurface(_player->_position.x, _player->_position.z).y, _player->_position.z);
 
     for(int i = 0; i < _numEnemies; i++) {
-        _enemies[i]->_speed += _lastSpawnTime / 1000000.0f;
-        _enemies[i]->calculateTrajectory(_player->_position);
-        _enemies[i]->move();
+        if(glm::length(_enemies[i]->_position - _player->_position) < 250.0f)
+            _enemies[i]->calculateTrajectory(_player->_position);
+            _enemies[i]->move();
         _enemies[i]->_position = glm::vec3(_enemies[i]->_position.x, evalSurface(_enemies[i]->_position.x, _enemies[i]->_position.z).y, _enemies[i]->_position.z);
     }
 
@@ -616,9 +625,9 @@ void FPEngine::_checkCollisions() {
             _gameOver = true;
             _gameOverMessage = "YOU DIED";
         }
-        if(length(_enemies[i]->_position - _player->_position) < 200.0f &&
-            abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.75){
-            _enemies[i]->_speed = 1.0f;
+        if(length(_enemies[i]->_position - _player->_position) < 300.0f &&
+            abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.85){
+            _enemies[i]->_speed = 1.5f;
         } else {
             _enemies[i]->_speed = 0.3f;
         }
@@ -631,11 +640,18 @@ void FPEngine::_checkCollisions() {
         }
     }
 
+    float closest = 9999.9f;
     for(int i = 0; i < _numCoins; i++) {
-        if(length(_coins[i]->_position - _player->_position) < 5) {
+        if(glm::length(_coins[i]->_position - _player->_position) < closest) {
+            closest = glm::length(_coins[i]->_position - _player->_position);
+            _pingDir = glm::normalize(glm::vec3(_coins[i]->_position - _player->_position));
+        }
+
+        if(glm::length(_coins[i]->_position - _player->_position) < 5) {
             _numCoins--;
             if(i < _numCoins) {
                 std::cout << "YOU FOUND A COIN! THERE ARE " << _numCoins << " COINS LEFT!" << std::endl;
+                _spawnEnemy(1);
                 _coins[i] = _coins[_numCoins];
                 _coins[_numCoins] = nullptr;
             }
@@ -643,27 +659,6 @@ void FPEngine::_checkCollisions() {
     }
 
     for(int i = 0; i < _numEnemies; i++) {
-        for(int j = 0; j < _numEnemies; j++) {
-            if (j == i) continue;
-            if(length(_enemies[i]->_position - _enemies[j]->_position) < length(_enemies[i]->_scale + _enemies[j]->_scale)/2) {
-                if(length(_enemies[i]->_scale) > length(_enemies[j]->_scale)) {
-                    _enemies[i]->handleCollision(_enemies[j]);
-                    _numEnemies--;
-                    if(j < _numEnemies){
-                        _enemies[j] = _enemies[_numEnemies];
-                        _enemies[_numEnemies] = nullptr;
-                    }
-                } else {
-                    _enemies[j]->handleCollision(_enemies[i]);
-                    _numEnemies--;
-                    if(i < _numEnemies){
-                        _enemies[i] = _enemies[_numEnemies];
-                        _enemies[_numEnemies] = nullptr;
-                    }
-                }
-
-            }
-        }
         for(int j = 0; j < _numTrees; j++) {
             if(abs(length(_enemies[i]->_position - _trees[j]->_position)) < 12) {
                 glm::vec3 opposite = _enemies[i]->_position - _trees[i]->_position;

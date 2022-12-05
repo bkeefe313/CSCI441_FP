@@ -109,6 +109,8 @@ private:
     GLint _numTrees;
     GLint _numCoins;
 
+    glm::vec3 _pingDir;
+
     CSCI441::ModelLoader* _models[4];
 
     /// lights

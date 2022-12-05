@@ -61,8 +61,7 @@ public:
     }
 
     void move() {
-        if(_rotation != _targetRotation)
-            _rotation += 0.01f*(_targetRotation - _rotation);
+        _rotation = _targetRotation;
 
         _axisOfRotation = glm::cross(_initHeading, _targetHeading);
 
