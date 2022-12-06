@@ -5,7 +5,7 @@
 #include <CSCI441/ModelLoader.hpp>
 #include <CSCI441/OpenGLEngine.hpp>
 #include "Player.h"
-#include "ArcballCam.h"
+#include <CSCI441/ArcballCam.hpp>
 #include "types/Enemy.h"
 #include "types/StaticObject.h"
 #include "types/Light.hpp"
@@ -35,6 +35,11 @@ public:
     /// \desc handle any cursor movement events inside the engine
     /// \param currMousePosition the current cursor position
     void handleCursorPositionEvent(glm::vec2 currMousePosition);
+
+    /// \desc handle any scroll events inside the engine
+    /// \param offset the current scroll offset
+    void handleScrollEvent(glm::vec2 offset);
+
 
     /// \desc value off-screen to represent mouse has not begun interacting with window yet
     static constexpr GLfloat MOUSE_UNINITIALIZED = -9999.0f;
@@ -86,7 +91,7 @@ private:
     std::string _gameOverMessage;
 
     /// \desc the static fixed camera in our world
-    ArcballCam* _cam;
+    CSCI441::ArcballCam* _cam;
 
     GLuint _vaos[16];
     GLuint _vbos[16];
@@ -246,8 +251,9 @@ private:
 
 };
 
-void lab04_engine_keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods );
-void lab04_engine_cursor_callback(GLFWwindow *window, double x, double y);
-void lab04_engine_mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
+void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods );
+void cursor_callback(GLFWwindow *window, double x, double y);
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
+void scroll_callback(GLFWwindow *window, double x, double y);
 
 #endif // LAB04_LAB04_ENGINE_HPP

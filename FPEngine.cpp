@@ -14,7 +14,7 @@
 
 FPEngine::FPEngine()
          : CSCI441::OpenGLEngine(4, 1, 1280, 720, "FP") {
-    _cam = new ArcballCam();
+    _cam = new CSCI441::ArcballCam();
 
     for(auto& _key : _keys) _key = GL_FALSE;
 
@@ -37,11 +37,6 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
 
     if(key == GLFW_KEY_LEFT_SHIFT) {
         _leftShiftState = action;
-    }
-    if(key == GLFW_KEY_LEFT_CONTROL) {
-        _leftControlState = action;
-        if(action == GLFW_RELEASE)
-            _cam->zoom(0);
     }
 
     if(action == GLFW_PRESS) {
@@ -116,23 +111,36 @@ void FPEngine::handleMouseButtonEvent(GLint button, GLint action) {
 
 void FPEngine::handleCursorPositionEvent(glm::vec2 currMousePosition) {
     // if mouse hasn't moved in the window, prevent camera from flipping out
-    if(_mousePosition.x == MOUSE_UNINITIALIZED) {
+    if(fabs(_mousePosition.x - MOUSE_UNINITIALIZED) <= 0.000001f) {
         _mousePosition = currMousePosition;
     }
 
-    // if the left mouse button is being held down while the mouse is moving
+    // active motion - if the left mouse button is being held down while the mouse is moving
     if(_leftMouseButtonState == GLFW_PRESS) {
-        if(_leftControlState != GLFW_PRESS) {
-            // rotate the camera by the distance the mouse moved
-            _cam->rotate((currMousePosition.x - _mousePosition.x) * 0.01f,
-                         (_mousePosition.y - currMousePosition.y) * 0.01f);
-        } else {
-            _cam->zoom((currMousePosition.y - _mousePosition.y) * 0.01f);
-        }
-    }
+        // if shift is held down, update our camera radius
 
+        // rotate the camera by the distance the mouse moved
+        _cam->rotate((currMousePosition.x - _mousePosition.x) * 0.005f,
+                                (_mousePosition.y - currMousePosition.y) * 0.005f);
+    }
     // update the mouse position
     _mousePosition = currMousePosition;
+}
+
+//void FPEngine::handleCursorPositionEvent(glm::vec2 currMousePosition) {
+//    // if mouse hasn't moved in the window, prevent camera from flipping out
+//    if(_mousePosition.x == MOUSE_UNINITIALIZED) {
+//        _mousePosition = currMousePosition;
+//    }
+//
+//    // update the mouse position
+//    _mousePosition = currMousePosition;
+//}
+
+void FPEngine::handleScrollEvent(glm::vec2 offset) {
+    // update the camera radius in/out
+    GLfloat totChgSq = offset.y;
+    _cam->moveForward( totChgSq * 0.2f );
 }
 
 void FPEngine::_createSkyboxBuffers() {
@@ -184,10 +192,12 @@ void FPEngine::_setupGLFW() {
     glfwSetWindowAttrib(_window, GLFW_RESIZABLE, true);
 
     // set our callbacks
-    glfwSetKeyCallback(_window, lab04_engine_keyboard_callback);
-    glfwSetMouseButtonCallback(_window, lab04_engine_mouse_button_callback);
-    glfwSetCursorPosCallback(_window, lab04_engine_cursor_callback);
+    glfwSetKeyCallback(_window, keyboard_callback);
+    glfwSetMouseButtonCallback(_window, mouse_button_callback);
+    glfwSetCursorPosCallback(_window, cursor_callback);
     glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetScrollCallback(_window, scroll_callback);
+
 }
 
 void FPEngine::_setupOpenGL() {
@@ -375,11 +385,17 @@ void FPEngine::_setupTextures() {
 }
 
 void FPEngine::_setupScene() {
-    _cam->setPosition(glm::vec3(0, 10, 0));
-    _cam->setRadius(32.0f);
-    _cam->setTheta(0.1 );
-    _cam->setPhi(0.1 );
-    _cam->_target = _player;
+//    _cam->setPosition(glm::vec3(0, 10, 0));
+//    _cam->setRadius(32.0f);
+//    _cam->setTheta(0.1 );
+//    _cam->setPhi(0.1 );
+//    _cam->setLookAtPoint(_player->_position);
+//    _cam->recomputeOrientation();
+
+    _cam->setLookAtPoint(_player->_position);
+    _cam->setTheta(3.52f);
+    _cam->setPhi(1.9f);
+    _cam->setRadius(30.0f);
     _cam->recomputeOrientation();
 
     _player->_position = glm::vec3(50, 0, 50);
@@ -525,9 +541,9 @@ void FPEngine::_updateScene() {
     if(_leftShiftState == GLFW_PRESS && _player->_walkSpeed > 0)
         _player->_walkSpeed = 0.6f;
 
-    _cam->recomputeOrientation();
-    _cam->updateZoom();
     _player->updatePosition();
+    _cam->setLookAtPoint(glm::vec3(_player->_position.x, _player->_position.y + 10.0f, _player->_position.z));
+    _cam->recomputeOrientation();
 
     if(abs(_player->_walkSpeed) > 0 || abs(_player->_strafeSpeed) > 0)
         _player->updateDirection(_cam->getPosition());
@@ -786,23 +802,33 @@ glm::vec3 FPEngine::evalSurface(GLfloat x, GLfloat y) {
 //
 // Callbacks
 
-void lab04_engine_keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods ) {
+void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods ) {
     auto engine = (FPEngine*) glfwGetWindowUserPointer(window);
 
     // pass the key and action through to the engine
     engine->handleKeyEvent(key, action);
 }
 
-void lab04_engine_cursor_callback(GLFWwindow *window, double x, double y ) {
+void cursor_callback(GLFWwindow *window, double x, double y ) {
     auto engine = (FPEngine*) glfwGetWindowUserPointer(window);
 
     // pass the cursor position through to the engine
     engine->handleCursorPositionEvent(glm::vec2(x, y));
 }
 
-void lab04_engine_mouse_button_callback(GLFWwindow *window, int button, int action, int mods ) {
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods ) {
     auto engine = (FPEngine*) glfwGetWindowUserPointer(window);
 
     // pass the mouse button and action through to the engine
     engine->handleMouseButtonEvent(button, action);
+}
+
+void scroll_callback(GLFWwindow *window, double xOffset, double yOffset) {
+    auto engine = (FPEngine*) glfwGetWindowUserPointer(window);
+
+    // ensure our engine is not null
+    if(engine) {
+        // pass the scroll offset through to the engine
+        engine->handleScrollEvent(glm::vec2(xOffset, yOffset));
+    }
 }
