@@ -10,7 +10,7 @@
 #include <CSCI441/ShaderProgram.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <CSCI441/objects.hpp>
-#include "include/CSCI441/ModelLoader.hpp"
+#include <CSCI441/ModelLoader.hpp>
 
 
 /// \desc essntially an object that is controlled by the user, contains all necessary data to render and move around

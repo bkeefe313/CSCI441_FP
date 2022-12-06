@@ -584,11 +584,11 @@ void FPEngine::run() {
     //	window will display once and then the program exits.
     while( !glfwWindowShouldClose(_window) ) {	        // check if the window was instructed to be closed
 
-        if(_gameOver){
-            std::cout << _gameOverMessage << std::endl;
-            glfwSetWindowShouldClose(_window, true);
-            break;
-        }
+//        if(_gameOver){
+//            std::cout << _gameOverMessage << std::endl;
+//            glfwSetWindowShouldClose(_window, true);
+//            break;
+//        }
 
         glDrawBuffer( GL_BACK );				        // work with our back frame buffer
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );	// clear the current color contents and depth buffer in the window

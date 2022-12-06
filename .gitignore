@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -30,3 +29,8 @@
 *.exe
 *.out
 *.app
+
+.DS_Store
+
+.idea
+cmake-build-debug

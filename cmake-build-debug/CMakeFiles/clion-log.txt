@@ -1,4 +1,4 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - Unix Makefiles" /Users/benkeefe/Desktop/CSCI441_FP
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S "/Users/jimmy/Documents/Code Shit/GitHub/CSCI441_FP" -B "/Users/jimmy/Documents/Code Shit/GitHub/CSCI441_FP/cmake-build-debug"
 -- Configuring done
 -- Generating done
--- Build files have been written to: /Users/benkeefe/Desktop/CSCI441_FP/cmake-build-debug
+-- Build files have been written to: /Users/jimmy/Documents/Code Shit/GitHub/CSCI441_FP/cmake-build-debug
