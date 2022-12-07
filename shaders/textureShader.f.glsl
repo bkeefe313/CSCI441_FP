@@ -64,7 +64,10 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
     vec3 i_a = color * vec3(0.1);
 
     //add together components
-    return (i_d + i_s + i_a) / (length(lightPos - pos)/10.0);
+    if(length(lightDir) != 0)
+        return (i_d + i_s + i_a) / (length(lightPos - pos)/10.0);
+    else
+        return (i_d + i_s + i_a);
 }
 
 // ***** FRAGMENT SHADER MAIN FUNCTION *****

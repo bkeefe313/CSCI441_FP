@@ -90,8 +90,8 @@ public:
                                              shader->getAttributeLocation("vNormal"),
                                              shader->getAttributeLocation("vTexCoord"));
 
-        _model->draw(shader->getShaderProgramHandle());
-        _limbs->draw(shader->getShaderProgramHandle());
+        _model->draw(shader->getShaderProgramHandle(),-1,-1,-1,-1, GL_TEXTURE0);
+        _limbs->draw(shader->getShaderProgramHandle(),-1,-1,-1,-1, GL_TEXTURE0);
     }
 
     glm::mat4 getModelMatrix() {

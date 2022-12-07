@@ -35,7 +35,7 @@ public:
         _modelMtx = glm::rotate(_modelMtx, _rotation, _axisOfRotation);
         _modelMtx = glm::scale(_modelMtx, _scale);
 
-        _model->draw(shader->getShaderProgramHandle());
+        _model->draw(shader->getShaderProgramHandle(),-1,-1,-1,-1, GL_TEXTURE0);
     }
 
     void updateRotation(float dTheta) {

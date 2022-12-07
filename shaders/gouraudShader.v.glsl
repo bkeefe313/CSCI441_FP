@@ -81,9 +81,11 @@ void main() {
     // transform & output the vertex in clip space
     gl_Position = mvpMatrix * vec4(vPos, 1.0);
 
+    vec3 norm = vec3(0, 1, 0);
+
     // transform vertex information into world space
     vec3 vPosWorld = (modelMatrix * vec4(vPos, 1.0)).xyz;
-    vec3 nVecWorld = normalize( normalMatrix * vNormal );
+    vec3 nVecWorld = normalize( normalMatrix * norm );
 
     // compute each component of the Phong Illumination Model
     vec3 diffColor = diffuseColor(vPosWorld, nVecWorld);

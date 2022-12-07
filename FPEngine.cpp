@@ -13,7 +13,7 @@
 // Public Interface
 
 FPEngine::FPEngine()
-         : CSCI441::OpenGLEngine(4, 1, 1280, 720, "FP") {
+        : CSCI441::OpenGLEngine(4, 1, 1280, 720, "FP") {
     _cam = new ArcballCam();
 
     for(auto& _key : _keys) _key = GL_FALSE;
@@ -52,7 +52,7 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
                 setWindowShouldClose();
                 break;
 
-            //movement
+                //movement
             case GLFW_KEY_W:
                 _player->_walkSpeed = 0.2f;
                 break;
@@ -74,6 +74,10 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
                 break;
             case GLFW_KEY_RIGHT:
                 _spawnEnemy(10);
+                break;
+
+            case GLFW_KEY_P:
+                _noiseOnlyMode = !_noiseOnlyMode;
                 break;
 
             case GLFW_KEY_1:
@@ -207,17 +211,17 @@ void FPEngine::_setupOpenGL() {
 
 void FPEngine::_setupShaders() {
 
-    _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.0));
+    _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.1));
     _flashlight = new Light(glm::vec3(0,0,0), glm::vec3(0,0,1), 0.8f, glm::vec3(0.5f, 0.5f, 0.5f));
 
     _texShaderProgram = new CSCI441::ShaderProgram("./shaders/textureShader.v.glsl",
-                                                      "./shaders/textureShader.f.glsl");
+                                                   "./shaders/textureShader.f.glsl");
     _textureShaderUniformLocations.camPos                   = _texShaderProgram->getUniformLocation("camPos");
     _textureShaderUniformLocations.pointLightColor          = _texShaderProgram->getUniformLocation("pointLightColor");
     _textureShaderUniformLocations.pointLightPos            = _texShaderProgram->getUniformLocation("pointLightPos");
     _textureShaderUniformLocations.flashlightColor          = _texShaderProgram->getUniformLocation("flashlightColor");
     _textureShaderUniformLocations.flashlightDir            = _texShaderProgram->getUniformLocation("flashlightDir");
-    _textureShaderUniformLocations.flashlightCutoff            = _texShaderProgram->getUniformLocation("flashlightCutoff");
+    _textureShaderUniformLocations.flashlightCutoff         = _texShaderProgram->getUniformLocation("flashlightCutoff");
     _textureShaderUniformLocations.flashlightPos            = _texShaderProgram->getUniformLocation("flashlightPos");
     _textureShaderUniformLocations.mvpMatrix                = _texShaderProgram->getUniformLocation("mvpMatrix");
     _textureShaderUniformLocations.modelMtx                 = _texShaderProgram->getUniformLocation("modelMtx");
@@ -226,6 +230,14 @@ void FPEngine::_setupShaders() {
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.pointLightColor, _sun->getColor());
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightColor, _flashlight->getColor());
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightCutoff, _flashlight->getAngle());
+
+    _terrainAbidingTexShader = new CSCI441::ShaderProgram("./shaders/terrainAbidingTex.v.glsl",
+                                                   "./shaders/textureShader.f.glsl");
+
+    _terrainAbidingTexShader->setProgramUniform("pointLightPos", _sun->getPosition());
+    _terrainAbidingTexShader->setProgramUniform("pointLightColor", _sun->getColor());
+    _terrainAbidingTexShader->setProgramUniform("flashlightColor", _flashlight->getColor());
+    _terrainAbidingTexShader->setProgramUniform("flashlightCutoff", _flashlight->getAngle());
 
 
     _gouraudShaderProgram = new CSCI441::ShaderProgram("./shaders/gouraudShader.v.glsl",
@@ -345,15 +357,15 @@ void FPEngine::_setupBuffers() {
                        _texShaderProgram->getAttributeLocation("vNormal"),
                        _texShaderProgram->getAttributeLocation("vTexCoord"));
 
-    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/WhenTheImposterIsSus.obj");
+    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/suzanne.obj");
     _models[Models::ENEMY]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
-                                       _texShaderProgram->getAttributeLocation("vNormal"),
-                                       _texShaderProgram->getAttributeLocation("vTexCoord"));
+                                                  _texShaderProgram->getAttributeLocation("vNormal"),
+                                                  _texShaderProgram->getAttributeLocation("vTexCoord"));
 
     _models[Models::TREE] = new CSCI441::ModelLoader("assets/tree.obj");
     _models[Models::TREE]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
-                                       _texShaderProgram->getAttributeLocation("vNormal"),
-                                       _texShaderProgram->getAttributeLocation("vTexCoord"));
+                                                 _texShaderProgram->getAttributeLocation("vNormal"),
+                                                 _texShaderProgram->getAttributeLocation("vTexCoord"));
 
     _models[Models::COIN] = new CSCI441::ModelLoader("assets/coin.obj");
     _models[Models::COIN]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
@@ -362,16 +374,19 @@ void FPEngine::_setupBuffers() {
 
     _createSkyboxBuffers();
 
-    _loadControlPointsFromFile("data/surface.txt", &_bezierPatch.numControlPoints, &_bezierPatch.numSurfaces,
-                               _bezierPatch.controlPoints, _bezierPatch.patchIndices);
-    _createBezierPatch();
+    _terrain = new PerlinTerrain(100, WORLD_SIZE);
+    _terrain->generateNoiseTexture();
+    _terrain->generateBuffers();
+    _terrain->configTerrainShader(_sun->getPosition(), _sun->getColor(), _flashlight->getColor(), _flashlight->getAngle());
 
+    _terrainAbidingTexShader->setProgramUniform("scalingFactor", _terrain->_scalingFactor);
 }
 
 void FPEngine::_setupTextures() {
     _textures[Textures::SKYBOX] = _loadAndRegisterTexture("assets/sky.png");
     _textures[Textures::JERMA] = _loadAndRegisterTexture("assets/jermasus.png");
     _textures[Textures::RED] = _loadAndRegisterTexture("assets/red.png");
+    _textures[Textures::GRASS] = _loadAndRegisterTexture("assets/grass.jpg");
 }
 
 void FPEngine::_setupScene() {
@@ -382,12 +397,12 @@ void FPEngine::_setupScene() {
     _cam->_target = _player;
     _cam->recomputeOrientation();
 
-    _player->_position = glm::vec3(50, 0, 50);
+    _player->_position = glm::vec3(10, 0, 10);
     _flashlight->_position = _player->_position;
 
-    _populateScene(512, 10);
+    _populateScene(12, 0);
 
-    _spawnEnemy(1);
+    //_spawnEnemy(1);
 
 }
 
@@ -395,13 +410,13 @@ void FPEngine::_populateScene(int nTrees, int nCoins) {
     _numTrees = nTrees;
     _numCoins = nCoins;
     for(int i = 0; i < nTrees; i++) {
-        glm::vec3 randPos = glm::vec3((rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE, 0, (rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE);
-        randPos = glm::vec3(randPos.x, evalSurface(randPos.x, randPos.z).y, randPos.z);
+        glm::vec3 randPos = glm::vec3(rand() % (int)WORLD_SIZE, 0, rand() % (int)WORLD_SIZE);
+        randPos = glm::vec3(randPos.x, 0, randPos.z);
         _trees[i] = new StaticObject(_models[Models::TREE], randPos);
     }
     for(int i = 0; i < nCoins; i++) {
-        glm::vec3 randPos = glm::vec3((rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE, 0, (rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE);
-        randPos = glm::vec3(randPos.x, evalSurface(randPos.x, randPos.z).y, randPos.z);
+        glm::vec3 randPos = glm::vec3(rand() % (int)WORLD_SIZE, 0, rand() % (int)WORLD_SIZE);
+        randPos = glm::vec3(randPos.x, 0, randPos.z);
         _coins[i] = new StaticObject(_models[Models::COIN], randPos, glm::vec3(5));
     }
 }
@@ -434,27 +449,43 @@ void FPEngine::_cleanupBuffers() {
 // Rendering / Drawing Functions - this is where the magic happens!
 
 void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
-    _texShaderProgram->useProgram();
 
-    _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightPos, _flashlight->_position);
-    _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightDir, _flashlight->_direction);
+    if(_noiseOnlyMode) {
+        _terrain->drawNoiseToScreenWithBlur();
+        return;
+    }
+
+    glm::mat4 vpMatrix = projMtx * viewMtx;
+
+    _terrainAbidingTexShader->useProgram();
+
+    _terrainAbidingTexShader->setProgramUniform("vpMatrix", vpMatrix);
+    _terrainAbidingTexShader->setProgramUniform("flashlightPos", _flashlight->_position);
+    _terrainAbidingTexShader->setProgramUniform("flashlightDir", _flashlight->_direction);
+    _terrainAbidingTexShader->setProgramUniform("tex", 0);
+    _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
+    _terrainAbidingTexShader->setProgramUniform("worldSize", WORLD_SIZE);
 
     //// DRAW ENEMIES ////
     for (int i = 0; i < _numEnemies; i++) {
-        _computeAndSendTransformationMatrices(_texShaderProgram, _enemies[i]->getModelMatrix(), viewMtx, projMtx,
-                                              _textureShaderUniformLocations.mvpMatrix,
-                                              _textureShaderUniformLocations.modelMtx,
-                                              _textureShaderUniformLocations.normMatrix);
-        _enemies[i]->draw(_texShaderProgram);
+        _terrainAbidingTexShader->setProgramUniform("modelMtx", _enemies[i]->getModelMatrix());
+        _terrainAbidingTexShader->setProgramUniform("wsPos", _enemies[i]->_position);
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+
+        _enemies[i]->draw(_terrainAbidingTexShader);
     }
 
 
     /// DRAW PLAYER ///
-    _computeAndSendTransformationMatrices(_texShaderProgram, _player->getModelMatrix(), viewMtx, projMtx,
-                                          _textureShaderUniformLocations.mvpMatrix,
-                                          _textureShaderUniformLocations.modelMtx,
-                                          _textureShaderUniformLocations.normMatrix);
-    _player->draw(_texShaderProgram);
+    _terrainAbidingTexShader->setProgramUniform("modelMtx", _player->getModelMatrix());
+
+    _terrainAbidingTexShader->setProgramUniform("wsPos", _player->_position);
+
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+
+    _player->draw(_terrainAbidingTexShader);
 
 
     /// DRAW SKYBOX ///
@@ -468,53 +499,48 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     modelMtx = glm::scale(modelMtx, glm::vec3(WORLD_SIZE, WORLD_SIZE, WORLD_SIZE) * 2.0f);
     _computeAndSendTransformationMatrices(_texShaderProgram, modelMtx, viewMtx, projMtx,
                                           _textureShaderUniformLocations.mvpMatrix,
-                                          _textureShaderUniformLocations.modelMtx,
-                                          _textureShaderUniformLocations.normMatrix);
+                                          _textureShaderUniformLocations.modelMtx, -1);
 
     glBindTexture(GL_TEXTURE_2D, _textures[Textures::SKYBOX]);
     glBindVertexArray(_vaos[VAOs::SKY]);
     glDrawElements(GL_TRIANGLE_STRIP, _numSkyboxPoints, GL_UNSIGNED_SHORT, (void *) 0);
-
-    /// DRAW BEZIER ///
-    _bezierShaderProgram->useProgram();
-
-    _bezierShaderProgram->setProgramUniform(_bezierShaderProgramUniformLocations.flashlightPos, _flashlight->_position);
-    _bezierShaderProgram->setProgramUniform(_bezierShaderProgramUniformLocations.flashlightDir, _flashlight->_direction);
-
-    CSCI441::setVertexAttributeLocations(_bezierShaderProgramAttributeLocations.vPos);
-    _bezierShaderProgram->setProgramUniform(_bezierShaderProgramUniformLocations.camPos, _cam->getPosition());
-    modelMtx = glm::mat4(1);
-    _computeAndSendTransformationMatrices(_bezierShaderProgram,
-                                          modelMtx, viewMtx, projMtx,
-                                          _bezierShaderProgramUniformLocations.mvpMatrix,
-                                          _bezierShaderProgramUniformLocations.modelMtx,
-                                          -1);
     glBindVertexArray(_vaos[VAOs::BEZIER]);
     glDrawElements(GL_PATCHES, _bezierPatch.numSurfaces * BezierPatch::POINTS_PER_PATCH, GL_UNSIGNED_SHORT, (void *) 0);
 
+    /// DRAW TERRAIN ///
+    _terrain->drawTerrain(viewMtx, projMtx, _flashlight->_position, _flashlight->_direction);
+
     /// DRAW STATIC OBJECTS ///
-    _texShaderProgram->useProgram();
+    _terrainAbidingTexShader->useProgram();
     for (int i = 0; i < _numTrees; i++) {
-        _computeAndSendTransformationMatrices(_texShaderProgram, _trees[i]->getModelMatrix(), viewMtx, projMtx,
-                                              _textureShaderUniformLocations.mvpMatrix,
-                                              _textureShaderUniformLocations.modelMtx,
-                                              _textureShaderUniformLocations.normMatrix);
-        _trees[i]->draw(_texShaderProgram);
+        _terrainAbidingTexShader->setProgramUniform("wsPos", _trees[i]->_position);
+        _terrainAbidingTexShader->setProgramUniform("modelMtx", _trees[i]->getModelMatrix());
+
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+
+        _trees[i]->draw(_terrainAbidingTexShader);
     }
     for (int i = 0; i < _numCoins; i++) {
-        _computeAndSendTransformationMatrices(_texShaderProgram, _coins[i]->getModelMatrix(), viewMtx, projMtx,
-                                              _textureShaderUniformLocations.mvpMatrix,
-                                              _textureShaderUniformLocations.modelMtx,
-                                              _textureShaderUniformLocations.normMatrix);
-        _coins[i]->draw(_texShaderProgram);
+        _terrainAbidingTexShader->setProgramUniform("wsPos", _coins[i]->_position);
+        _terrainAbidingTexShader->setProgramUniform("modelMtx", _coins[i]->getModelMatrix());
+
+        _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+
+        _coins[i]->draw(_terrainAbidingTexShader);
     }
 
+
     glBindTexture(GL_TEXTURE_2D, _textures[Textures::RED]);
+    glActiveTexture(GL_TEXTURE0);
+    _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
     modelMtx = glm::translate(glm::mat4(1), _player->_position + 8.0f*_pingDir + glm::vec3(0, 10, 0));
-    _computeAndSendTransformationMatrices(_texShaderProgram, modelMtx, viewMtx, projMtx,
-                                          _textureShaderUniformLocations.mvpMatrix,
-                                          _textureShaderUniformLocations.modelMtx,
-                                          _textureShaderUniformLocations.normMatrix);
+    _terrainAbidingTexShader->setProgramUniform("wsPos", _player->_position + 8.0f*_pingDir + glm::vec3(0, 10, 0));
+    _terrainAbidingTexShader->setProgramUniform("modelMtx", modelMtx);
     CSCI441::drawSolidSphere(0.4, 16, 16);
 
 
@@ -533,21 +559,13 @@ void FPEngine::_updateScene() {
         _player->updateDirection(_cam->getPosition());
 
 
-    /*
-    if(glfwGetTime() - _lastSpawnTime > 5) {
-        _lastSpawnTime = glfwGetTime();
-        _spawnEnemy(25);
-    }
-     */
-
-
     //make player fall of world edge
     if(_player->_position.x > WORLD_SIZE  || _player->_position.z > WORLD_SIZE ||
-       _player->_position.x < -WORLD_SIZE || _player->_position.z < -WORLD_SIZE  ) {
+       _player->_position.x < 0 || _player->_position.z < 0  ) {
         _player->fallOffEdge();
     }
     if(!_player->_falling)
-        _player->_position = glm::vec3(_player->_position.x, evalSurface(_player->_position.x, _player->_position.z).y, _player->_position.z);
+        _player->_position = glm::vec3(_player->_position.x, 0, _player->_position.z);
 
     for(int i = 0; i < _numEnemies; i++) {
         if(glm::length(_enemies[i]->_position - _player->_position) < 350.0f) {
@@ -605,7 +623,7 @@ void FPEngine::run() {
         // set the projection matrix based on the window size
         // use a perspective projection that ranges
         // with a FOV of 45 degrees, for our current aspect ratio, and Z ranges from [0.001, 100].
-        glm::mat4 projectionMatrix = glm::perspective( 45.0f, (GLfloat) framebufferWidth / (GLfloat) framebufferHeight, 0.001f, 10000.0f );
+        glm::mat4 projectionMatrix = glm::perspective( 45.0f, (GLfloat) framebufferWidth / (GLfloat) framebufferHeight, 0.001f, 15000.0f );
 
         // set up our look at matrix to position our camera
         glm::mat4 viewMatrix = _cam->getViewMatrix();
@@ -627,7 +645,7 @@ void FPEngine::_checkCollisions() {
             _gameOverMessage = "YOU DIED";
         }
         if(length(_enemies[i]->_position - _player->_position) < 300.0f &&
-            abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.8f){
+           abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.8f){
             _enemies[i]->_speed = 1.3f;
         } else {
             _enemies[i]->_speed = 0.5f;
@@ -675,16 +693,9 @@ void FPEngine::_checkCollisions() {
 
 //// HELPERS
 
-void FPEngine::_computeAndSendMatrixUniforms(CSCI441::ShaderProgram* shader, glm::mat4 modelMtx, glm::mat4 viewMtx, glm::mat4 projMtx) const {
-    // precompute the Model-View-Projection matrix on the CPU
-    glm::mat4 mvpMtx = projMtx * viewMtx * modelMtx;
-    // then send it to the shader on the GPU to apply to every vertex
-    shader->setProgramUniform("mvpMatrix", mvpMtx);
-}
-
 void FPEngine::_computeAndSendTransformationMatrices(CSCI441::ShaderProgram* shaderProgram,
-                                                        glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix,
-                                                        GLint mvpMtxLocation, GLint modelMtxLocation, GLint normalMtxLocation) {
+                                                     glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix,
+                                                     GLint mvpMtxLocation, GLint modelMtxLocation, GLint normalMtxLocation) {
     // ensure our shader program is not null
     if( shaderProgram ) {
         // precompute the MVP matrix CPU side
@@ -773,6 +784,8 @@ glm::vec3 FPEngine::evalBezierCurve(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, gl
 }
 
 glm::vec3 FPEngine::evalSurface(GLfloat x, GLfloat y) {
+    return glm::vec3(0);
+
     GLfloat u = (x + WORLD_SIZE)/(WORLD_SIZE*2);
     GLfloat v = (y + WORLD_SIZE)/(WORLD_SIZE*2);
     return evalBezierCurve(evalBezierCurve(_bezierPatch.controlPoints[0], _bezierPatch.controlPoints[1], _bezierPatch.controlPoints[2], _bezierPatch.controlPoints[3], u),

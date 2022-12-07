@@ -3,6 +3,7 @@
 // uniform inputs
 uniform mat4 mvpMatrix;                 // the precomputed Model-View-Projection Matrix
 uniform mat4 modelMtx;
+uniform bool isTerrain;
 
 //camera position uniform
 uniform vec3 camPos;
@@ -23,6 +24,9 @@ void main() {
     // transform & output the vertex in clip space
     gl_Position = mvpMatrix * vec4(vPos, 1.0);
     pos = vPos;
-    normal = vNormal;
+    if(isTerrain)
+        normal = vec3(0, 1, 0);
+    else
+        normal = vNormal;
     texCoord = vTexCoord;
 }

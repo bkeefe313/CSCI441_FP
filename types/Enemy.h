@@ -52,7 +52,7 @@ public:
 
     void draw(CSCI441::ShaderProgram* shader) {
         _offset = glm::vec3(0, 1.5f, 0) * _scale.y;
-        _model->draw(shader->getShaderProgramHandle());
+        _model->draw(shader->getShaderProgramHandle(),-1,-1,-1,-1, GL_TEXTURE0);
     }
 
     void calculateTrajectory(glm::vec3 target) {

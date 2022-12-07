@@ -9,6 +9,7 @@
 #include "types/Enemy.h"
 #include "types/StaticObject.h"
 #include "types/Light.hpp"
+#include "types/PerlinTerrain.h"
 #include <CSCI441/ShaderProgram.hpp>
 
 #define NUM_MAX_ENEMIES 1024
@@ -72,7 +73,7 @@ private:
     /// down state.  if false, then the key is in a released state and not being interacted with
     GLboolean _keys[NUM_KEYS];
 
-    GLfloat WORLD_SIZE = 1000.0f;
+    GLfloat WORLD_SIZE = 2000.0f;
     GLfloat _lastSpawnTime = 0.0f;
 
     /// \desc last location of the mouse in window coordinates
@@ -83,6 +84,7 @@ private:
     GLint _leftControlState;
 
     bool _gameOver = false;
+    bool _noiseOnlyMode = false;
     std::string _gameOverMessage;
 
     /// \desc the static fixed camera in our world
@@ -120,6 +122,9 @@ private:
     CSCI441::ShaderProgram* _texShaderProgram = nullptr;
     CSCI441::ShaderProgram* _gouraudShaderProgram = nullptr;
     CSCI441::ShaderProgram* _bezierShaderProgram = nullptr;
+    CSCI441::ShaderProgram* _terrainAbidingTexShader = nullptr;
+
+    PerlinTerrain* _terrain;
 
     /// \desc Bezier Patch Information
     struct BezierPatch {
@@ -223,7 +228,8 @@ private:
     enum Textures {
         SKYBOX = 0,
         JERMA = 1,
-        RED = 2
+        RED = 2,
+        GRASS = 3
     };
 
     enum VAOs {
