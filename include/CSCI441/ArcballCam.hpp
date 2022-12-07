@@ -12,7 +12,7 @@
 #ifndef CSCI441_ARCBALL_CAM_HPP
 #define CSCI441_ARCBALL_CAM_HPP
 
-#include "Camera.hpp"
+#include <CSCI441/Camera.hpp>
 
 /// \namespace CSCI441
 /// \desc CSCI441 Helper Functions for OpenGL
@@ -21,7 +21,7 @@ namespace CSCI441 {
     /// \note camera direction is controlled by setting theta & phi and rotating the camera
     class ArcballCam : public CSCI441::Camera {
     public:
-        explicit ArcballCam(GLfloat minRadius = 2.0f, GLfloat maxRadius = 50.0f) : _minRadius(minRadius), _maxRadius(maxRadius) {}
+        explicit ArcballCam(GLfloat minRadius = 2.0f, GLfloat maxRadius = 100.0f) : _minRadius(minRadius), _maxRadius(maxRadius) {}
 
         /// \desc converts spherical theta & phi to cartesian x,y,z direction vector
         /// \note sets the camera's position to be on a sphere centered

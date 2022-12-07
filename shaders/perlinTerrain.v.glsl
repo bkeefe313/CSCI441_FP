@@ -33,7 +33,27 @@ void main() {
     float dx = 0.1, dz = 0.1;
     vec3 gradientApprox = vec3(dx, perlin(vec2(vPos.x + dx, vPos.z + dz)) - height, dz);
 
-    color = vec3(0.1, 0.8, 0.2);
-    pos = vec3(prePos.x, prePos.y, prePos.z);
-    normal = vec3(0, 1, 0); //normalize(vec3(-gradientApprox.x, gradientApprox.y, -gradientApprox.z));
+
+    vec3 highestColor = vec3(0.8, 0.8, 0.9);
+    vec3 highColor = vec3(0.25, 0.25, 0.3);
+    vec3 highMidColor = vec3(0.18, 0.07, 0.0);
+    vec3 midColor = vec3(0.1, 0.5, 0.1);
+    vec3 lowColor = vec3(0.25, 0.1, 0.0);
+    vec3 lowestColor = vec3(0.1, 0.05, 0.4);
+
+    if(height > 0.65)
+        color = highestColor;
+    else if(height > 0.3)
+        color = highColor;
+    else if(height > 0.15)
+        color = highColor;
+    else if(height < -0.65)
+        color = lowestColor;
+    else if(height < -0.25)
+        color = lowColor;
+    else
+        color = midColor;
+
+    pos = vec3(prePos.x, height, prePos.z);
+    normal = normalize(vec3(-gradientApprox.x, gradientApprox.y, -gradientApprox.z));
 }

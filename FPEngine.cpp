@@ -68,7 +68,10 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
                 _deleteEnemy();
                 break;
             case GLFW_KEY_RIGHT:
-                _spawnEnemy(10);
+                _terrain->_scalingFactor += 5.0f;
+                break;
+            case GLFW_KEY_LEFT:
+                _terrain->_scalingFactor -= 5.0f;
                 break;
 
             case GLFW_KEY_P:
@@ -81,6 +84,19 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
                 while(_numEnemies > 0)
                     _deleteEnemy();
                 _noDangerMode = !_noDangerMode;
+                break;
+            case GLFW_KEY_K:
+                _staticObjectsOn = !_staticObjectsOn;
+                break;
+            case GLFW_KEY_O:
+                _superFastMode = !_superFastMode;
+                break;
+
+            case GLFW_KEY_LEFT_BRACKET:
+                _camOffset -= 5.0f;
+                break;
+            case GLFW_KEY_RIGHT_BRACKET:
+                _camOffset += 5.0f;
                 break;
 
             case GLFW_KEY_1:
@@ -217,8 +233,8 @@ void FPEngine::_setupOpenGL() {
 
 void FPEngine::_setupShaders() {
 
-    _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.25));
-    _flashlight = new Light(glm::vec3(0,0,0), glm::vec3(0,0,1), 0.5f, glm::vec3(0.5f, 0.5f, 0.5f));
+    _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.05));
+    _flashlight = new Light(glm::vec3(0,0,0), glm::normalize(glm::vec3(0,-0.5,1)), 0.5f, glm::vec3(0.5f, 0.5f, 0.5f));
 
     _texShaderProgram = new CSCI441::ShaderProgram("./shaders/textureShader.v.glsl",
                                                    "./shaders/textureShader.f.glsl");
@@ -299,8 +315,6 @@ void FPEngine::_setupBuffers() {
     _terrain->generateNoiseTexture();
     _terrain->generateBuffers();
     _terrain->configTerrainShader(_sun->getPosition(), _sun->getColor(), _flashlight->getColor(), _flashlight->getAngle());
-
-    _terrainAbidingTexShader->setProgramUniform("scalingFactor", _terrain->_scalingFactor);
 }
 
 void FPEngine::_setupTextures() {
@@ -314,7 +328,7 @@ void FPEngine::_setupScene() {
     _cam->setLookAtPoint(_player->_position);
     _cam->setTheta(3.52f);
     _cam->setPhi(1.9f);
-    _cam->setRadius(50.0f);
+    _cam->setRadius(60.0f);
     _cam->recomputeOrientation();
 
     _player->_position = glm::vec3(WORLD_SIZE / 2, 0, WORLD_SIZE / 2);
@@ -376,13 +390,14 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         return;
     }
     if(_daylightMode) {
-        _sun->_color = glm::vec3(1, 1, 1);
+        _sun->_color = glm::vec3(0.75, 0.75, 0.75);
     } else {
-        _sun->_color = glm::vec3(0, 0, 0.2f);
+        _sun->_color = glm::vec3(0, 0, 0.05f);
     }
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.pointLightColor, _sun->getColor());
     _terrainAbidingTexShader->setProgramUniform("pointLightColor", _sun->getColor());
     _terrain->_terrainShader->setProgramUniform("pointLightColor", _sun->getColor());
+
 
     glm::mat4 vpMatrix = projMtx * viewMtx;
 
@@ -395,6 +410,7 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     _terrainAbidingTexShader->setProgramUniform("tex", 0);
     _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
     _terrainAbidingTexShader->setProgramUniform("worldSize", WORLD_SIZE);
+    _terrainAbidingTexShader->setProgramUniform("scalingFactor", _terrain->_scalingFactor);
 
     //// DRAW ENEMIES ////
     for (int i = 0; i < _numEnemies; i++) {
@@ -440,26 +456,29 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 
     _terrain->drawTerrain(viewMtx, projMtx, _flashlight->_position, _flashlight->_direction, _cam->getPosition());
 
-    /// DRAW STATIC OBJECTS ///
-    _terrainAbidingTexShader->useProgram();
-    for (int i = 0; i < _numTrees; i++) {
-        _terrainAbidingTexShader->setProgramUniform("wsPos", _trees[i]->_position);
-        _terrainAbidingTexShader->setProgramUniform("modelMtx", _trees[i]->getModelMatrix());
 
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+    if(_staticObjectsOn) {
+        /// DRAW STATIC OBJECTS ///
+        _terrainAbidingTexShader->useProgram();
+        for (int i = 0; i < _numTrees; i++) {
+            _terrainAbidingTexShader->setProgramUniform("wsPos", _trees[i]->_position);
+            _terrainAbidingTexShader->setProgramUniform("modelMtx", _trees[i]->getModelMatrix());
 
-        _trees[i]->draw(_terrainAbidingTexShader);
-    }
-    for (int i = 0; i < _numCoins; i++) {
-        _terrainAbidingTexShader->setProgramUniform("wsPos", _coins[i]->_position);
-        _terrainAbidingTexShader->setProgramUniform("modelMtx", _coins[i]->getModelMatrix());
+            glActiveTexture(GL_TEXTURE0 + 1);
+            glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
 
-        _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+            _trees[i]->draw(_terrainAbidingTexShader);
+        }
+        for (int i = 0; i < _numCoins; i++) {
+            _terrainAbidingTexShader->setProgramUniform("wsPos", _coins[i]->_position);
+            _terrainAbidingTexShader->setProgramUniform("modelMtx", _coins[i]->getModelMatrix());
 
-        _coins[i]->draw(_terrainAbidingTexShader);
+            _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
+            glActiveTexture(GL_TEXTURE0 + 1);
+            glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+
+            _coins[i]->draw(_terrainAbidingTexShader);
+        }
     }
 
 
@@ -480,9 +499,18 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 void FPEngine::_updateScene() {
     if(_leftShiftState == GLFW_PRESS && _player->_walkSpeed > 0)
         _player->_walkSpeed = 0.6f;
+    if(_superFastMode && _player->_walkSpeed > 0)
+        _player->_walkSpeed = 2.0f;
+    else if(_superFastMode && _player->_walkSpeed < 0)
+        _player->_walkSpeed = -2.0f;
 
     _player->updatePosition();
-    _cam->setLookAtPoint(_player->_position + glm::vec3(0, 20.0f, 0));
+
+
+    _cam->setLookAtPoint(_player->_position + glm::vec3(0, _camOffset, 0));
+
+
+
     _cam->recomputeOrientation();
 
     if(abs(_player->_walkSpeed) > 0 || abs(_player->_strafeSpeed) > 0)
@@ -509,7 +537,7 @@ void FPEngine::_updateScene() {
     }
 
     _flashlight->_direction = _player->_forward;
-    _flashlight->_position = _player->_position + (1.5f*_player->_forward) + glm::vec3(0, 10, 0);
+    _flashlight->_position = _player->_position + (1.5f*_player->_forward) + glm::vec3(0, 30, 0);
 
     _checkCollisions();
 

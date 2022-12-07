@@ -8,6 +8,8 @@
 #include <CSCI441/ShaderProgram.hpp>
 #include <random>
 
+#define SCREEN_SIZE 1000.0f
+
 class PerlinTerrain {
 public:
     int _res;
@@ -22,7 +24,7 @@ public:
     GLuint _quadVAO, _quadVBO, _quadIBO;
     GLuint _fbo, _noiseTex;
 
-    GLfloat _scalingFactor = 20.0f;
+    GLfloat _scalingFactor = 40.0f;
 
     CSCI441::ShaderProgram* _noiseShader;
     CSCI441::ShaderProgram* _terrainShader;
@@ -175,7 +177,7 @@ public:
     }
 
     void drawNoiseToFBO() {
-        _noiseShader->setProgramUniform(_noiseShader->getUniformLocation("screenSize"), 1000.0f);
+        _noiseShader->setProgramUniform(_noiseShader->getUniformLocation("screenSize"), SCREEN_SIZE);
         CSCI441::setVertexAttributeLocations(_noiseShader->getAttributeLocation("vPos"));
 
         //draw the quad using noise generation shader
@@ -193,7 +195,7 @@ public:
     }
 
     void drawNoiseToScreen() {
-        _noiseShader->setProgramUniform(_noiseShader->getUniformLocation("screenSize"), 1000.0f);
+        _noiseShader->setProgramUniform(_noiseShader->getUniformLocation("screenSize"), SCREEN_SIZE);
         CSCI441::setVertexAttributeLocations(_noiseShader->getAttributeLocation("vPos"));
 
         //draw the quad using noise generation shader
@@ -212,6 +214,49 @@ public:
         glBindTexture(GL_TEXTURE_2D, _noiseTex);
         glActiveTexture(GL_TEXTURE0);
         drawNoiseToScreen();
+    }
+
+    glm::vec4 permute(glm::vec4 x){return mod(((x*34.0f)+1.0f)*x, 289.0f);}
+    glm::vec2 fade(glm::vec2 t) {return t*t*t*(t*(t*6.0f-15.0f)+10.0f);}
+
+    /// \desc Takes some vec2 in world space (x, z) and spits out the proper height on the terrain
+    float cnoise(glm::vec2 P){
+        P /= _size;
+
+        std::cout << P.x << ", " << P.y << std::endl;
+
+        P *= (SCREEN_SIZE / 91.0f);
+
+        glm::vec4 Pi = glm::vec4(floor(P.x), floor(P.y), floor(P.x), floor(P.y)) + glm::vec4(0.0, 0.0, 1.0, 1.0);
+        glm::vec4 Pf = glm::vec4(glm::fract(P.x), glm::fract(P.y), glm::fract(P.x), glm::fract(P.y)) - glm::vec4(0.0, 0.0, 1.0, 1.0);
+        Pi = glm::mod(Pi, 289.0f); // To avoid truncation effects in permutation
+        glm::vec4 ix(Pi.x, Pi.z, Pi.x, Pi.z);
+        glm::vec4 iy(Pi.y, Pi.y, Pi.w, Pi.w);
+        glm::vec4 fx(Pf.x, Pf.z, Pf.x, Pf.z);
+        glm::vec4 fy(Pf.y, Pf.y, Pf.w, Pf.w);
+        glm::vec4 i = permute(permute(ix) + iy);
+        glm::vec4 gx = 2.0f * glm::fract(i * 0.0243902439f) - 1.0f; // 1/41 = 0.024...
+        glm::vec4 gy = abs(gx) - 0.5f;
+        glm::vec4 tx = floor(gx + 0.5f);
+        gx = gx - tx;
+        glm::vec2 g00 = glm::vec2(gx.x,gy.x);
+        glm:: vec2 g10 = glm::vec2(gx.y,gy.y);
+        glm::vec2 g01 = glm::vec2(gx.z,gy.z);
+        glm::vec2 g11 = glm::vec2(gx.w,gy.w);
+        glm::vec4 norm = 1.79284291400159f - 0.85373472095314f *
+                glm::vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));
+        g00 *= norm.x;
+        g01 *= norm.y;
+        g10 *= norm.z;
+        g11 *= norm.w;
+        float n00 = dot(g00, glm::vec2(fx.x, fy.x));
+        float n10 = dot(g10, glm::vec2(fx.y, fy.y));
+        float n01 = dot(g01, glm::vec2(fx.z, fy.z));
+        float n11 = dot(g11, glm::vec2(fx.w, fy.w));
+        glm::vec2 fade_xy = fade(glm::vec2(Pf.x, Pf.y));
+        glm::vec2 n_x = mix(glm::vec2(n00, n01), glm::vec2(n10, n11), fade_xy.x);
+        float n_xy = glm::mix(n_x.x, n_x.y, fade_xy.y);
+        return 2.3f * n_xy * _scalingFactor;
     }
 
 

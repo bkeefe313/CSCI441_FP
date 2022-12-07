@@ -5,7 +5,7 @@
 #include <CSCI441/ModelLoader.hpp>
 #include <CSCI441/OpenGLEngine.hpp>
 #include "Player.h"
-#include <CSCI441/ArcballCam.hpp>
+#include "include/CSCI441/ArcballCam.hpp"
 #include "types/Enemy.h"
 #include "types/StaticObject.h"
 #include "types/Light.hpp"
@@ -92,10 +92,13 @@ private:
     bool _noiseOnlyMode = false;
     bool _daylightMode = false;
     bool _noDangerMode = false;
+    bool _staticObjectsOn = true;
+    bool _superFastMode = false;
     std::string _gameOverMessage;
 
     /// \desc the static fixed camera in our world
     CSCI441::ArcballCam* _cam;
+    float _camOffset = 20.0f;
 
     GLuint _vaos[16];
     GLuint _vbos[16];
