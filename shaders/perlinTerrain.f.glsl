@@ -27,10 +27,17 @@ uniform vec3 flashlightDir;
 uniform mat4 modelMtx;
 uniform vec3 camPos;
 
-uniform sampler2D perlinTex;
+uniform sampler2D snowTex;  const int snow  = 0;
+uniform sampler2D rockyTex; const int rocky = 1;
+uniform sampler2D aridTex;  const int arid  = 2;
+uniform sampler2D grassTex; const int grass = 3;
+uniform sampler2D sandTex;  const int sand  = 4;
+uniform sampler2D waterTex; const int water = 5;
+
 
 // ***** FRAGMENT SHADER INPUT *****
-in vec3 color;
+in float elevation;
+in vec2 texCoord;
 in vec3 pos;
 in vec3 normal;
 
@@ -38,7 +45,7 @@ in vec3 normal;
 out vec4 fragColorOut;
 
 // ***** FRAGMENT SHADER HELPER FUNCTIONS *****
-vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3 lightDir) {
+vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3 lightDir, vec3 color) {
     vec4 transformedPos = modelMtx * vec4(vertPos, 1.0);
     vec3 pos = vec3(transformedPos.x, transformedPos.y, transformedPos.z);
 
@@ -78,7 +85,50 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
 
 // ***** FRAGMENT SHADER MAIN FUNCTION *****
 void main() {
-    fragColorOut = vec4(calcLight(pointLightColor, pointLightPos, pos, normal, vec3(0,0,0)) +
-                    calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir), 1);
+    vec4 a, b;
+    vec4 texColor;
+
+    if(elevation > 0.7) {
+        a = texture(snowTex, texCoord);
+        texColor = a;
+    } else if(elevation > 0.55) {
+        a = texture(snowTex, texCoord);
+        b = texture(rockyTex, texCoord);
+        texColor = mix(a, b, (0.7 - elevation) / 0.3);
+    } else if(elevation > 0.3) {
+        a = texture(rockyTex, texCoord);
+        texColor = a;
+    } else if(elevation > 0.2) {
+        a = texture(rockyTex, texCoord);
+        b = texture(aridTex, texCoord);
+        texColor = mix(a, b, (0.3 - elevation) / 0.15);
+    } else if(elevation > 0.1) {
+        a = texture(aridTex, texCoord);
+        texColor = a;
+    } else if(elevation < -0.7) {
+        a = texture(waterTex, texCoord);
+        texColor = a;
+    } else if(elevation < -0.55) {
+        a = texture(sandTex, texCoord);
+        b = texture(waterTex, texCoord);
+        texColor = mix(a, b, (-0.3 - elevation) / 0.3);
+    } else if(elevation < -0.4) {
+        a = texture(sandTex, texCoord);
+        texColor = a;
+    } else if(elevation < -0.15) {
+        a = texture(grassTex, texCoord);
+        b = texture(sandTex, texCoord);
+        texColor = mix(a, b, (- elevation) / 0.34);
+    } else if(elevation > 0.05) {
+        a = texture(aridTex, texCoord);
+        b = texture(grassTex, texCoord);
+        texColor = mix(a, b, (0.1 - elevation) / 0.05);
+    } else {
+        a = texture(grassTex, texCoord);
+        texColor = a;
+    }
+
+    fragColorOut = vec4(calcLight(pointLightColor, pointLightPos, pos, normal, vec3(0,0,0), texColor.xyz) +
+                    calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir, texColor.xyz), 1);
 
 }

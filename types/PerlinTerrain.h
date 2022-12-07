@@ -29,6 +29,19 @@ public:
     CSCI441::ShaderProgram* _noiseShader;
     CSCI441::ShaderProgram* _terrainShader;
 
+    GLuint _textures[6];
+
+
+    enum Textures {
+        SNOW = 0,
+        ROCKY = 1,
+        ARID = 2,
+        GRASS = 3,
+        SAND = 4,
+        WATER = 5
+    };
+
+
     PerlinTerrain(int res, float size) {
         _numTriangles = 0;
         _vao = -1, _vbo = -1, _ibo = -1;
@@ -49,16 +62,85 @@ public:
         glm::mat4 mvpMatrix = projMtx * viewMtx * modelMtx;
         _terrainShader->setProgramUniform("modelMtx", modelMtx);
         _terrainShader->setProgramUniform("mvpMatrix", mvpMatrix);
-        _terrainShader->setProgramUniform("perlinTex", _noiseTex);
         _terrainShader->setProgramUniform("flashlightPos", flPos);
         _terrainShader->setProgramUniform("flashlightDir", flDir);
         _terrainShader->setProgramUniform("camPos", camPos);
 
-        glBindTexture(GL_TEXTURE_2D, _noiseTex);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
         glBindVertexArray(_vao);
+
+        _terrainShader->setProgramUniform( "perlinTex", 0 );
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, _noiseTex );
+
+        glActiveTexture( GL_TEXTURE1 + SNOW  );
+        glBindTexture(   GL_TEXTURE_2D, _textures[SNOW]  );
+
+        glActiveTexture( GL_TEXTURE1 + ROCKY );
+        glBindTexture(   GL_TEXTURE_2D, _textures[ROCKY] );
+
+        glActiveTexture( GL_TEXTURE1 + ARID  );
+        glBindTexture(   GL_TEXTURE_2D, _textures[ARID]  );
+
+        glActiveTexture( GL_TEXTURE1 + GRASS );
+        glBindTexture(   GL_TEXTURE_2D, _textures[GRASS] );
+
+        glActiveTexture( GL_TEXTURE1 + SAND  );
+        glBindTexture(   GL_TEXTURE_2D, _textures[SAND]  );
+
+        glActiveTexture( GL_TEXTURE1 + WATER );
+        glBindTexture(   GL_TEXTURE_2D, _textures[WATER] );
+
+        glActiveTexture( GL_TEXTURE0 );
+
         glDrawElements(GL_TRIANGLES, _numTriangles*3, GL_UNSIGNED_SHORT, (void*)0);
+
+    }
+
+    void setupTextures() {
+        _textures[SNOW] = loadAndRegisterTexture("assets/snow.jpg");
+        _textures[ROCKY] = loadAndRegisterTexture("assets/soil.jpg");
+        _textures[ARID] = loadAndRegisterTexture("assets/arid.png");
+        _textures[GRASS] = loadAndRegisterTexture("assets/grass.jpg");
+        _textures[SAND] = loadAndRegisterTexture("assets/sand.jpg");
+        _textures[WATER] = loadAndRegisterTexture("assets/water.png");
+
+
+        _terrainShader->setProgramUniform( "snowTex", SNOW + 1   );
+        glActiveTexture( GL_TEXTURE1 + SNOW  );
+        glBindTexture(   GL_TEXTURE_2D, _textures[SNOW]  );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+        _terrainShader->setProgramUniform( "rockyTex", ROCKY + 1 );
+        glActiveTexture( GL_TEXTURE1 + ROCKY );
+        glBindTexture(   GL_TEXTURE_2D, _textures[ROCKY] );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+        _terrainShader->setProgramUniform( "aridTex", ARID + 1   );
+        glActiveTexture( GL_TEXTURE1 + ARID  );
+        glBindTexture(   GL_TEXTURE_2D, _textures[ARID]  );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+        _terrainShader->setProgramUniform( "grassTex", GRASS + 1 );
+        glActiveTexture( GL_TEXTURE1 + GRASS );
+        glBindTexture(   GL_TEXTURE_2D, _textures[GRASS] );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+        _terrainShader->setProgramUniform( "sandTex", SAND + 1   );
+        glActiveTexture( GL_TEXTURE1 + SAND  );
+        glBindTexture(   GL_TEXTURE_2D, _textures[SAND]  );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+        _terrainShader->setProgramUniform( "waterTex", WATER + 1 );
+        glActiveTexture( GL_TEXTURE1 + WATER );
+        glBindTexture(   GL_TEXTURE_2D, _textures[WATER] );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
 
     }
 
@@ -68,9 +150,12 @@ public:
         _terrainShader->setProgramUniform("flashlightColor", flColor);
         _terrainShader->setProgramUniform("flashlightCutoff", flAngle);
         _terrainShader->setProgramUniform("worldSize", _size);
+
     }
 
     void generateBuffers() {
+
+        setupTextures();
 
         for(int i = 0; i < _res; i++) {
             for(int j = 0; j < _res; j++) {
@@ -259,6 +344,50 @@ public:
         return 2.3f * n_xy * _scalingFactor;
     }
 
+
+    GLuint loadAndRegisterTexture(const char* FILENAME) {
+        // our handle to the GPU
+        GLuint textureHandle = 0;
+
+        // enable setting to prevent image from being upside down
+        stbi_set_flip_vertically_on_load(true);
+
+        // will hold image parameters after load
+        GLint imageWidth, imageHeight, imageChannels;
+        // load image from file
+        GLubyte* data = stbi_load( FILENAME, &imageWidth, &imageHeight, &imageChannels, 0);
+
+        // if data was read from file
+        if( data ) {
+            const GLint STORAGE_TYPE = (imageChannels == 4 ? GL_RGBA : GL_RGB);
+
+            glGenTextures(1, &textureHandle);
+
+            glBindTexture(GL_TEXTURE_2D, textureHandle);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, STORAGE_TYPE, imageWidth, imageHeight, 0, STORAGE_TYPE, GL_UNSIGNED_BYTE, data);
+
+
+            fprintf( stdout, "[INFO]: %s texture map read in with handle %d\n", FILENAME, textureHandle);
+
+            // release image memory from CPU - it now lives on the GPU
+            stbi_image_free(data);
+        } else {
+            // load failed
+            fprintf( stderr, "[ERROR]: Could not load texture map \"%s\"\n", FILENAME );
+        }
+
+        // return generated texture handle
+        return textureHandle;
+    }
 
 };
 
