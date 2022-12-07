@@ -48,7 +48,7 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
     vec3 viewDir = normalize(camPos - pos);
     vec3 halfway = normalize(viewDir + lightVector);
 
-    float min = 0.3f;
+    float min = 0.2f;
     if(length(lightDir) == 0)
         min = 0.0f;
     vec3 i_d =  lightColor * color * max(dot(vertNorm, lightVector), min);
@@ -65,7 +65,7 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
     }
 
     //perform ambient calculation
-    vec3 i_a = color * vec3(0.1);
+    vec3 i_a = lightColor * color * vec3(0.1);
 
     if(dot(vec2(vertNorm.x, vertNorm.z), vec2(lightDir.x, lightDir.z)) > 0.9)
         return color*vec3(0.05);

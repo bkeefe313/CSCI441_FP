@@ -76,5 +76,5 @@ void main() {
     vec3 texColor3 = vec3(texColor.x, texColor.y, texColor.z);
 
     fragColorOut = vec4(calcLight(pointLightColor, pointLightPos, pos, normal, vec3(0,0,0), texColor3) +
-    calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir, texColor3), texColor.w);
+    calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir, texColor3)/5.0, texColor.w);
 }

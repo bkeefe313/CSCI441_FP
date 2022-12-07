@@ -142,17 +142,25 @@ void FPEngine::handleCursorPositionEvent(glm::vec2 currMousePosition) {
     if(fabs(_mousePosition.x - MOUSE_UNINITIALIZED) <= 0.000001f) {
         _mousePosition = currMousePosition;
     }
+    // if shift is held down, update our camera radius
 
-    // active motion - if the left mouse button is being held down while the mouse is moving
-    if(_leftMouseButtonState == GLFW_PRESS) {
-        // if shift is held down, update our camera radius
+    // rotate the camera by the distance the mouse moved
+    _cam->rotate((currMousePosition.x - _mousePosition.x) * 0.005f,
+                            (_mousePosition.y - currMousePosition.y) * 0.005f);
 
-        // rotate the camera by the distance the mouse moved
-        _cam->rotate((currMousePosition.x - _mousePosition.x) * 0.005f,
-                                (_mousePosition.y - currMousePosition.y) * 0.005f);
-    }
     // update the mouse position
     _mousePosition = currMousePosition;
+
+    int w = 0, h = 0;
+    glfwGetWindowSize(_window, &w, &h);
+    if(_mousePosition.x > w)
+        glfwSetCursorPos(_window, 0, _mousePosition.y);
+    if(_mousePosition.y > h)
+        glfwSetCursorPos(_window, _mousePosition.x, 0);
+    if(_mousePosition.x < 0)
+        glfwSetCursorPos(_window, w, _mousePosition.y);
+    if(_mousePosition.y < 0)
+        glfwSetCursorPos(_window, _mousePosition.x, h);
 }
 
 void FPEngine::handleScrollEvent(glm::vec2 offset) {
@@ -294,7 +302,7 @@ void FPEngine::_setupBuffers() {
                        _texShaderProgram->getAttributeLocation("vNormal"),
                        _texShaderProgram->getAttributeLocation("vTexCoord"));
 
-    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/suzanne.obj");
+    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/whenTheImposterIsSus.obj");
     _models[Models::ENEMY]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                                   _texShaderProgram->getAttributeLocation("vNormal"),
                                                   _texShaderProgram->getAttributeLocation("vTexCoord"));
@@ -334,9 +342,7 @@ void FPEngine::_setupScene() {
     _player->_position = glm::vec3(WORLD_SIZE / 2, 0, WORLD_SIZE / 2);
     _flashlight->_position = _player->_position;
 
-    _populateScene(512, 0);
-
-    std::cout << "HI" << std::endl;
+    _populateScene(300, 20);
 
     _spawnEnemy(1);
 
@@ -392,7 +398,7 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     if(_daylightMode) {
         _sun->_color = glm::vec3(0.75, 0.75, 0.75);
     } else {
-        _sun->_color = glm::vec3(0, 0, 0.05f);
+        _sun->_color = glm::vec3(0, 0, 0);
     }
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.pointLightColor, _sun->getColor());
     _terrainAbidingTexShader->setProgramUniform("pointLightColor", _sun->getColor());
@@ -498,7 +504,7 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 
 void FPEngine::_updateScene() {
     if(_leftShiftState == GLFW_PRESS && _player->_walkSpeed > 0)
-        _player->_walkSpeed = 0.6f;
+        _player->_walkSpeed = 0.8f;
     if(_superFastMode && _player->_walkSpeed > 0)
         _player->_walkSpeed = 2.0f;
     else if(_superFastMode && _player->_walkSpeed < 0)
@@ -559,11 +565,11 @@ void FPEngine::run() {
     //	window will display once and then the program exits.
     while( !glfwWindowShouldClose(_window) ) {	        // check if the window was instructed to be closed
 
-//        if(_gameOver){
-//            std::cout << _gameOverMessage << std::endl;
-//            glfwSetWindowShouldClose(_window, true);
-//            break;
-//        }
+        if(_gameOver){
+            std::cout << _gameOverMessage << std::endl;
+            glfwSetWindowShouldClose(_window, true);
+            break;
+        }
 
         glDrawBuffer( GL_BACK );				        // work with our back frame buffer
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );	// clear the current color contents and depth buffer in the window
@@ -750,6 +756,7 @@ void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, in
 
 void cursor_callback(GLFWwindow *window, double x, double y ) {
     auto engine = (FPEngine*) glfwGetWindowUserPointer(window);
+
 
     // pass the cursor position through to the engine
     engine->handleCursorPositionEvent(glm::vec2(x, y));
