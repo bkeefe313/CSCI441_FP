@@ -326,7 +326,7 @@ void FPEngine::_setupTextures() {
 
 void FPEngine::_setupScene() {
     _cam->setLookAtPoint(_player->_position);
-    _cam->setTheta(3.52f);
+    _cam->setTheta(9.0f);
     _cam->setPhi(1.9f);
     _cam->setRadius(60.0f);
     _cam->recomputeOrientation();
