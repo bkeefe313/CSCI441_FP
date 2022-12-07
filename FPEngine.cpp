@@ -146,7 +146,7 @@ void FPEngine::handleCursorPositionEvent(glm::vec2 currMousePosition) {
 
     // rotate the camera by the distance the mouse moved
     _cam->rotate((currMousePosition.x - _mousePosition.x) * 0.005f,
-                            (_mousePosition.y - currMousePosition.y) * 0.005f);
+                            (currMousePosition.y - _mousePosition.y) * 0.005f);
 
     // update the mouse position
     _mousePosition = currMousePosition;
@@ -302,7 +302,7 @@ void FPEngine::_setupBuffers() {
                        _texShaderProgram->getAttributeLocation("vNormal"),
                        _texShaderProgram->getAttributeLocation("vTexCoord"));
 
-    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/suzanne.obj");
+    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/WhenTheImposterIsSus.obj");
     _models[Models::ENEMY]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                                   _texShaderProgram->getAttributeLocation("vNormal"),
                                                   _texShaderProgram->getAttributeLocation("vTexCoord"));

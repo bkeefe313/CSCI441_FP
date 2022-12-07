@@ -74,9 +74,6 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
     //perform ambient calculation
     vec3 i_a = lightColor * color * vec3(0.1);
 
-    if(dot(vec2(vertNorm.x, vertNorm.z), vec2(lightDir.x, lightDir.z)) > 0.9)
-        return color*vec3(0.05);
-
     if(length(lightDir) != 0)
         return (i_d + i_s + i_a) / (length(lightPos - pos)/20.0);
     else
