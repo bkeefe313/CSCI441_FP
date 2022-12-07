@@ -74,6 +74,14 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
             case GLFW_KEY_P:
                 _noiseOnlyMode = !_noiseOnlyMode;
                 break;
+            case GLFW_KEY_L:
+                _daylightMode = !_daylightMode;
+                break;
+            case GLFW_KEY_M:
+                while(_numEnemies > 0)
+                    _deleteEnemy();
+                _noDangerMode = !_noDangerMode;
+                break;
 
             case GLFW_KEY_1:
                 break;
@@ -130,16 +138,6 @@ void FPEngine::handleCursorPositionEvent(glm::vec2 currMousePosition) {
     // update the mouse position
     _mousePosition = currMousePosition;
 }
-
-//void FPEngine::handleCursorPositionEvent(glm::vec2 currMousePosition) {
-//    // if mouse hasn't moved in the window, prevent camera from flipping out
-//    if(_mousePosition.x == MOUSE_UNINITIALIZED) {
-//        _mousePosition = currMousePosition;
-//    }
-//
-//    // update the mouse position
-//    _mousePosition = currMousePosition;
-//}
 
 void FPEngine::handleScrollEvent(glm::vec2 offset) {
     // update the camera radius in/out
@@ -215,14 +213,12 @@ void FPEngine::_setupOpenGL() {
 
     glFrontFace(GL_CCW);                                            // the front faces are CCW
     glCullFace(GL_BACK);                                            // cull the back faces
-
-    glPatchParameteri( GL_PATCH_VERTICES, BezierPatch::POINTS_PER_PATCH );
 }
 
 void FPEngine::_setupShaders() {
 
-    _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.1));
-    _flashlight = new Light(glm::vec3(0,0,0), glm::vec3(0,0,1), 0.8f, glm::vec3(0.5f, 0.5f, 0.5f));
+    _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.25));
+    _flashlight = new Light(glm::vec3(0,0,0), glm::vec3(0,0,1), 0.5f, glm::vec3(0.5f, 0.5f, 0.5f));
 
     _texShaderProgram = new CSCI441::ShaderProgram("./shaders/textureShader.v.glsl",
                                                    "./shaders/textureShader.f.glsl");
@@ -269,91 +265,6 @@ void FPEngine::_setupShaders() {
     _gouraudShaderProgram->setProgramUniform(_gouraudShaderProgramUniformLocations.lightPos, _sun->getPosition());
     _gouraudShaderProgram->setProgramUniform(_gouraudShaderProgramUniformLocations.lightType, 0);
     _gouraudShaderProgram->setProgramUniform(_gouraudShaderProgramUniformLocations.lightColor, _sun->getColor());
-
-
-    _bezierShaderProgram = new CSCI441::ShaderProgram( "shaders/bezierPatch.v.glsl",
-                                                       "shaders/bezierPatch.tc.glsl",
-                                                       "shaders/bezierPatch.te.glsl",
-                                                       "shaders/bezierPatch.f.glsl");
-    _bezierShaderProgramUniformLocations.camPos             = _bezierShaderProgram->getUniformLocation("camPos");
-    _bezierShaderProgramUniformLocations.pointLightColor    = _bezierShaderProgram->getUniformLocation("pointLightColor");
-    _bezierShaderProgramUniformLocations.pointLightPos      = _bezierShaderProgram->getUniformLocation("pointLightPos");
-    _bezierShaderProgramUniformLocations.flashlightColor    = _bezierShaderProgram->getUniformLocation("flashlightColor");
-    _bezierShaderProgramUniformLocations.flashlightPos      = _bezierShaderProgram->getUniformLocation("flashlightPos");
-    _bezierShaderProgramUniformLocations.flashlightDir      = _bezierShaderProgram->getUniformLocation("flashlightDir");
-    _bezierShaderProgramUniformLocations.flashlightCutoff   = _bezierShaderProgram->getUniformLocation("flashlightCutoff");
-    _bezierShaderProgramUniformLocations.mvpMatrix          = _bezierShaderProgram->getUniformLocation("mvpMatrix");
-    _bezierShaderProgramUniformLocations.modelMtx           = _bezierShaderProgram->getUniformLocation("modelMtx");
-    _bezierShaderProgramAttributeLocations.vPos             = _bezierShaderProgram->getAttributeLocation("vPos");
-
-    _bezierShaderProgram->setProgramUniform(_bezierShaderProgramUniformLocations.pointLightPos, _sun->getPosition());
-    _bezierShaderProgram->setProgramUniform(_bezierShaderProgramUniformLocations.pointLightColor, _sun->getColor());
-    _bezierShaderProgram->setProgramUniform(_bezierShaderProgramUniformLocations.flashlightColor, _flashlight->getColor());
-    _bezierShaderProgram->setProgramUniform(_bezierShaderProgramUniformLocations.flashlightCutoff, _flashlight->getAngle());
-}
-
-void FPEngine::_loadControlPointsFromFile(const char* FILENAME, GLuint* numBezierPoints, GLuint* numBezierSurfaces, glm::vec3* &bezierPoints, GLushort* &bezierIndices) {
-    FILE *file = fopen(FILENAME, "r");
-
-    if(!file) {
-        fprintf( stderr, "[ERROR]: Could not open \"%s\"\n", FILENAME );
-    } else {
-        fscanf( file, "%u\n", numBezierSurfaces );
-
-        fprintf( stdout, "[INFO]: Reading in %u surfaces\n", *numBezierSurfaces );
-
-        bezierIndices = (GLushort*)malloc( sizeof( GLushort ) * *numBezierSurfaces * BezierPatch::POINTS_PER_PATCH );
-        if(!bezierIndices) {
-            fprintf( stderr, "[ERROR]: Could not allocate space for surface indices\n" );
-        } else {
-            for( int i = 0; i < *numBezierSurfaces; i++ ) {
-                // read in the first 15 points that have a comma following
-                for( int j = 0; j < BezierPatch::POINTS_PER_PATCH-1; j++) {
-                    fscanf( file, "%hu,", &bezierIndices[i*BezierPatch::POINTS_PER_PATCH + j] );
-                    bezierIndices[i *BezierPatch::POINTS_PER_PATCH + j]--;
-                }
-                // read in the 16th point that has a new line following
-                fscanf( file, "%hu\n", &bezierIndices[i*BezierPatch::POINTS_PER_PATCH + BezierPatch::POINTS_PER_PATCH-1] );
-                bezierIndices[i*BezierPatch::POINTS_PER_PATCH + BezierPatch::POINTS_PER_PATCH-1]--;
-            }
-        }
-
-        fscanf( file, "%u\n", numBezierPoints );
-
-        fprintf( stdout, "[INFO]: Reading in %u control points\n", *numBezierPoints );
-
-        bezierPoints = (glm::vec3*)malloc( sizeof( glm::vec3 ) * *numBezierPoints );
-        if(!bezierPoints) {
-            fprintf( stderr, "[ERROR]: Could not allocate space for control points\n" );
-        } else {
-            for( int i = 0; i < *numBezierPoints; i++ ) {
-                fscanf( file, "%f,%f,%f\n", &(bezierPoints[i].x), &(bezierPoints[i].y), &(bezierPoints[i].z));
-            }
-        }
-    }
-    for( int i = 0; i < *numBezierPoints; i++ ) {
-        bezierPoints[i] = (bezierPoints[i] * WORLD_SIZE) / 5.0f;
-    }
-    fclose(file);
-}
-
-void FPEngine::_createBezierPatch() {
-    glGenVertexArrays(1, &_vaos[VAOs::BEZIER]);
-
-    glBindVertexArray( _vaos[VAOs::BEZIER] );
-
-    glGenBuffers(1, &_vbos[VAOs::BEZIER]);
-    glBindBuffer( GL_ARRAY_BUFFER, _vbos[VAOs::BEZIER] );
-    glBufferData( GL_ARRAY_BUFFER, _bezierPatch.numControlPoints * sizeof(glm::vec3), _bezierPatch.controlPoints, GL_STATIC_DRAW );
-
-    glEnableVertexAttribArray( _bezierShaderProgramAttributeLocations.vPos );
-    glVertexAttribPointer( _bezierShaderProgramAttributeLocations.vPos, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0 );
-
-    glGenBuffers(1, &_ibos[VAOs::BEZIER]);
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _ibos[VAOs::BEZIER] );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, _bezierPatch.numSurfaces * BezierPatch::POINTS_PER_PATCH * sizeof(GLushort), _bezierPatch.patchIndices, GL_STATIC_DRAW );
-
-    fprintf( stdout, "[INFO]: surface control points generated in with VAO %d\n", _vaos[VAOs::BEZIER] );
 }
 
 // _setupBuffers() /////////////////////////////////////////////////////////////
@@ -400,25 +311,20 @@ void FPEngine::_setupTextures() {
 }
 
 void FPEngine::_setupScene() {
-//    _cam->setPosition(glm::vec3(0, 10, 0));
-//    _cam->setRadius(32.0f);
-//    _cam->setTheta(0.1 );
-//    _cam->setPhi(0.1 );
-//    _cam->setLookAtPoint(_player->_position);
-//    _cam->recomputeOrientation();
-
     _cam->setLookAtPoint(_player->_position);
     _cam->setTheta(3.52f);
     _cam->setPhi(1.9f);
-    _cam->setRadius(30.0f);
+    _cam->setRadius(50.0f);
     _cam->recomputeOrientation();
 
-    _player->_position = glm::vec3(10, 0, 10);
+    _player->_position = glm::vec3(WORLD_SIZE / 2, 0, WORLD_SIZE / 2);
     _flashlight->_position = _player->_position;
 
-    _populateScene(12, 0);
+    _populateScene(512, 0);
 
-    //_spawnEnemy(1);
+    std::cout << "HI" << std::endl;
+
+    _spawnEnemy(1);
 
 }
 
@@ -446,7 +352,6 @@ void FPEngine::_cleanupShaders() {
     fprintf( stdout, "[INFO]: ...deleting Shaders.\n" );
     glDeleteShader(_texShaderProgram->getShaderProgramHandle());
     glDeleteShader(_gouraudShaderProgram->getShaderProgramHandle());
-    glDeleteShader(_bezierShaderProgram->getShaderProgramHandle());
 }
 
 void FPEngine::_cleanupBuffers() {
@@ -467,9 +372,17 @@ void FPEngine::_cleanupBuffers() {
 void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 
     if(_noiseOnlyMode) {
-        _terrain->drawNoiseToScreenWithBlur();
+        _terrain->drawNoiseToScreen();
         return;
     }
+    if(_daylightMode) {
+        _sun->_color = glm::vec3(1, 1, 1);
+    } else {
+        _sun->_color = glm::vec3(0, 0, 0.2f);
+    }
+    _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.pointLightColor, _sun->getColor());
+    _terrainAbidingTexShader->setProgramUniform("pointLightColor", _sun->getColor());
+    _terrain->_terrainShader->setProgramUniform("pointLightColor", _sun->getColor());
 
     glm::mat4 vpMatrix = projMtx * viewMtx;
 
@@ -478,6 +391,7 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     _terrainAbidingTexShader->setProgramUniform("vpMatrix", vpMatrix);
     _terrainAbidingTexShader->setProgramUniform("flashlightPos", _flashlight->_position);
     _terrainAbidingTexShader->setProgramUniform("flashlightDir", _flashlight->_direction);
+    _terrainAbidingTexShader->setProgramUniform("camPos", _cam->getPosition());
     _terrainAbidingTexShader->setProgramUniform("tex", 0);
     _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
     _terrainAbidingTexShader->setProgramUniform("worldSize", WORLD_SIZE);
@@ -523,7 +437,8 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 
 
     /// DRAW TERRAIN ///
-    _terrain->drawTerrain(viewMtx, projMtx, _flashlight->_position, _flashlight->_direction);
+
+    _terrain->drawTerrain(viewMtx, projMtx, _flashlight->_position, _flashlight->_direction, _cam->getPosition());
 
     /// DRAW STATIC OBJECTS ///
     _terrainAbidingTexShader->useProgram();
@@ -567,7 +482,7 @@ void FPEngine::_updateScene() {
         _player->_walkSpeed = 0.6f;
 
     _player->updatePosition();
-    _cam->setLookAtPoint(glm::vec3(_player->_position.x, _player->_position.y + 10.0f, _player->_position.z));
+    _cam->setLookAtPoint(_player->_position + glm::vec3(0, 20.0f, 0));
     _cam->recomputeOrientation();
 
     if(abs(_player->_walkSpeed) > 0 || abs(_player->_strafeSpeed) > 0)
@@ -587,7 +502,6 @@ void FPEngine::_updateScene() {
             _enemies[i]->calculateTrajectory(_player->_position);
             _enemies[i]->move();
         }
-        _enemies[i]->_position = glm::vec3(_enemies[i]->_position.x, evalSurface(_enemies[i]->_position.x, _enemies[i]->_position.z).y, _enemies[i]->_position.z);
     }
 
     for(int i = 0; i < _numCoins; i++) {
@@ -638,7 +552,7 @@ void FPEngine::run() {
         // set the projection matrix based on the window size
         // use a perspective projection that ranges
         // with a FOV of 45 degrees, for our current aspect ratio, and Z ranges from [0.001, 100].
-        glm::mat4 projectionMatrix = glm::perspective( 45.0f, (GLfloat) framebufferWidth / (GLfloat) framebufferHeight, 0.001f, 15000.0f );
+        glm::mat4 projectionMatrix = glm::perspective( 45.0f, (GLfloat) framebufferWidth / (GLfloat) framebufferHeight, 0.001f, 8000.0f );
 
         // set up our look at matrix to position our camera
         glm::mat4 viewMatrix = _cam->getViewMatrix();
@@ -776,7 +690,7 @@ void FPEngine::_spawnEnemy(int n) {
             _numEnemies = NUM_MAX_ENEMIES;
             return;
         }
-        glm::vec3 randPos((rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE, 0, (rand() % (int)WORLD_SIZE*2) - (int)WORLD_SIZE);
+        glm::vec3 randPos(rand() % (int)WORLD_SIZE, 0, rand() % (int)WORLD_SIZE);
         std::cout << "Spawned enemy at: ( " << randPos.x << ", " << randPos.z << " ). " << "There are now " << _numEnemies << " enemies." << std::endl;
         _enemies[_numEnemies - 1] = new Enemy(_models[Models::ENEMY], randPos, glm::vec3(10));
     }
@@ -792,21 +706,6 @@ void FPEngine::_deleteEnemy() {
     std::cout << "Deleted enemy. There are now " << _numEnemies << " enemies." << std::endl;
 
     delete(_enemies[_numEnemies]);
-}
-
-glm::vec3 FPEngine::evalBezierCurve(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, GLfloat t) {
-    return ( (powf(1.0f-t,3)*p0) + (3.0f*powf(1.0f-t, 2)*t*p1) + (3.0f*(1.0f-t)*t*t*p2) + (t*t*t*p3) );
-}
-
-glm::vec3 FPEngine::evalSurface(GLfloat x, GLfloat y) {
-    return glm::vec3(0);
-
-    GLfloat u = (x + WORLD_SIZE)/(WORLD_SIZE*2);
-    GLfloat v = (y + WORLD_SIZE)/(WORLD_SIZE*2);
-    return evalBezierCurve(evalBezierCurve(_bezierPatch.controlPoints[0], _bezierPatch.controlPoints[1], _bezierPatch.controlPoints[2], _bezierPatch.controlPoints[3], u),
-                           evalBezierCurve(_bezierPatch.controlPoints[4], _bezierPatch.controlPoints[5], _bezierPatch.controlPoints[6], _bezierPatch.controlPoints[7], u),
-                           evalBezierCurve(_bezierPatch.controlPoints[8], _bezierPatch.controlPoints[9], _bezierPatch.controlPoints[10], _bezierPatch.controlPoints[11], u),
-                           evalBezierCurve(_bezierPatch.controlPoints[12], _bezierPatch.controlPoints[13], _bezierPatch.controlPoints[14], _bezierPatch.controlPoints[15], u), v);
 }
 
 

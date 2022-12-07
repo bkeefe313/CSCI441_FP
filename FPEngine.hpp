@@ -90,6 +90,8 @@ private:
 
     bool _gameOver = false;
     bool _noiseOnlyMode = false;
+    bool _daylightMode = false;
+    bool _noDangerMode = false;
     std::string _gameOverMessage;
 
     /// \desc the static fixed camera in our world
@@ -126,44 +128,9 @@ private:
 
     CSCI441::ShaderProgram* _texShaderProgram = nullptr;
     CSCI441::ShaderProgram* _gouraudShaderProgram = nullptr;
-    CSCI441::ShaderProgram* _bezierShaderProgram = nullptr;
     CSCI441::ShaderProgram* _terrainAbidingTexShader = nullptr;
 
     PerlinTerrain* _terrain;
-
-    /// \desc Bezier Patch Information
-    struct BezierPatch {
-        /// \desc the number of control points per patch
-        static const GLuint POINTS_PER_PATCH = 16;
-        /// \desc control points array
-        glm::vec3* controlPoints = nullptr;
-        /// \desc index array
-        GLushort* patchIndices = nullptr;
-        /// \desc number of control points in the surface system.
-        /// \desc corresponds to the size of controlPoints array
-        GLuint numControlPoints;
-        /// \desc number of curves in the system
-        GLuint numSurfaces;
-    } _bezierPatch;
-
-    struct BezierShaderProgramUniformLocations {
-        /// \desc precomputed MVP matrix location
-        GLint mvpMatrix;
-        GLint camPos;
-        GLint pointLightColor;
-        GLint pointLightPos;
-        GLint modelMtx;
-        GLint flashlightPos;
-        GLint flashlightColor;
-        GLint flashlightDir;
-        GLint flashlightCutoff;
-    } _bezierShaderProgramUniformLocations;
-
-    /// \desc stores the locations of all of our shader attributes
-    struct BezierShaderProgramAttributeLocations {
-        /// \desc vertex position location
-        GLint vPos;
-    } _bezierShaderProgramAttributeLocations;
 
     struct TextureShaderUniformLocations {
         GLint mvpMatrix;

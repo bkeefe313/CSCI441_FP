@@ -39,16 +39,18 @@ public:
                                                     "shaders/perlinTerrain.f.glsl");
     }
 
-    void drawTerrain(glm::mat4 viewMtx, glm::mat4 projMtx, glm::vec3 flPos, glm::vec3 flDir){
+    void drawTerrain(glm::mat4 viewMtx, glm::mat4 projMtx, glm::vec3 flPos, glm::vec3 flDir, glm::vec3 camPos){
         _terrainShader->useProgram();
         glm::mat4 modelMtx = glm::scale(glm::mat4(1), glm::vec3(1, _scalingFactor, 1));
         CSCI441::setVertexAttributeLocations(_terrainShader->getAttributeLocation("vPos"));
 
         glm::mat4 mvpMatrix = projMtx * viewMtx * modelMtx;
+        _terrainShader->setProgramUniform("modelMtx", modelMtx);
         _terrainShader->setProgramUniform("mvpMatrix", mvpMatrix);
         _terrainShader->setProgramUniform("perlinTex", _noiseTex);
         _terrainShader->setProgramUniform("flashlightPos", flPos);
         _terrainShader->setProgramUniform("flashlightDir", flDir);
+        _terrainShader->setProgramUniform("camPos", camPos);
 
         glBindTexture(GL_TEXTURE_2D, _noiseTex);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -169,11 +171,6 @@ public:
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
 
         _noiseShader->setProgramUniform("blurOn", false);
-        drawNoiseToFBO();
-        _noiseShader->setProgramUniform("blurOn", true);
-        _noiseShader->setProgramUniform("prevNoise", 0);
-        glBindTexture(GL_TEXTURE_2D, _noiseTex);
-        glActiveTexture(GL_TEXTURE0);
         drawNoiseToFBO();
     }
 

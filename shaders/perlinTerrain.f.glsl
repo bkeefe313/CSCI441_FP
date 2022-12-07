@@ -71,7 +71,6 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
 // ***** FRAGMENT SHADER MAIN FUNCTION *****
 void main() {
     fragColorOut = vec4(calcLight(pointLightColor, pointLightPos, pos, normal, vec3(0,0,0)) +
-    calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir), 1);
+                    calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir), 1);
 
-    fragColorOut = vec4(color, 1.0);
 }
