@@ -312,9 +312,9 @@ void FPEngine::_setupTextures() {
 
 void FPEngine::_setupScene() {
     _cam->setLookAtPoint(_player->_position);
-    _cam->setTheta(3.52f);
+    _cam->setTheta(9.0f);
     _cam->setPhi(1.9f);
-    _cam->setRadius(50.0f);
+    _cam->setRadius(30.0f);
     _cam->recomputeOrientation();
 
     _player->_position = glm::vec3(WORLD_SIZE / 2, 0, WORLD_SIZE / 2);
@@ -482,7 +482,7 @@ void FPEngine::_updateScene() {
         _player->_walkSpeed = 0.6f;
 
     _player->updatePosition();
-    _cam->setLookAtPoint(_player->_position + glm::vec3(0, 20.0f, 0));
+    _cam->setLookAtPoint(_player->_position + glm::vec3(0, 10.0f, 0));
     _cam->recomputeOrientation();
 
     if(abs(_player->_walkSpeed) > 0 || abs(_player->_strafeSpeed) > 0)
