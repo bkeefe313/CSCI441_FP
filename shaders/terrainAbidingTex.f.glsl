@@ -52,7 +52,7 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
     // perform specular calculations
     vec3 i_s = lightColor * color * pow(max(dot(vertNorm, halfway), 0.0), 4.0);
 
-    if(length(lightDir) != 0) {
+    if (length(lightDir) != 0) {
         float theta = dot(normalize(lightDir), -lightVector);
         if (theta <= flashlightCutoff) {
             i_d = vec3(0.0, 0.0, 0.0);
@@ -64,7 +64,7 @@ vec3 calcLight(vec3 lightColor, vec3 lightPos, vec3 vertPos, vec3 vertNorm, vec3
     vec3 i_a = color * vec3(0.1);
 
     //add together components
-    if(length(lightDir) != 0)
+    if (length(lightDir) != 0)
     return (i_d + i_s + i_a) / (length(lightPos - pos)/10.0);
     else
     return (i_d + i_s + i_a);
@@ -75,6 +75,6 @@ void main() {
     vec4 texColor = texture(tex, texCoord);
     vec3 texColor3 = vec3(texColor.x, texColor.y, texColor.z);
 
-    fragColorOut = vec4(calcLight(pointLightColor, pointLightPos, pos, normal, vec3(0,0,0), texColor3) +
+    fragColorOut = vec4(calcLight(pointLightColor, pointLightPos, pos, normal, vec3(0, 0, 0), texColor3) +
     calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir, texColor3), texColor.w);
 }

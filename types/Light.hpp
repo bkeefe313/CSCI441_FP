@@ -1,9 +1,5 @@
-//
-// Created by Ben Keefe on 10/10/22.
-//
-
-#ifndef A3_LIGHT_HPP
-#define A3_LIGHT_HPP
+#ifndef FP_LIGHT_HPP
+#define FP_LIGHT_HPP
 
 #include <glm/vec3.hpp>
 #include <GL/glew.h>
@@ -27,7 +23,7 @@ public:
     /// \param color the light's color in XYZ = RGB
     /// \param type the type of light. use POINT for point lights and DIRECTIONAL for directional lights
     Light(glm::vec3 posOrDir, glm::vec3 color, LightType type) {
-        if(type == DIRECTIONAL) {
+        if (type == DIRECTIONAL) {
             _direction = posOrDir;
         } else {
             _position = posOrDir;
@@ -39,7 +35,7 @@ public:
     /// \desc initialize a point light
     /// \param position where the light is located in world space
     /// \param color the light's color in XYZ = RGB
-    Light( glm::vec3 position, glm::vec3 color) {
+    Light(glm::vec3 position, glm::vec3 color) {
         _type = POINT;
         _position = position;
         _color = color;
@@ -60,19 +56,19 @@ public:
 
     /// \desc returns position of point or spotlight. DO NOT USE ON DIRECTIONAL LIGHT.
     glm::vec3 getPosition() {
-        if(_type != DIRECTIONAL)
+        if (_type != DIRECTIONAL)
             return _position;
     }
 
     /// \desc returns cutoff angle of spotlight. DO NOT USE ON DIRECTIONAL OR POINT LIGHT.
     GLfloat getAngle() {
-        if(_type == SPOTLIGHT)
+        if (_type == SPOTLIGHT)
             return _angle;
     }
 
     /// \desc returns direction of directional or spotlight. DO NOT USE ON POINT LIGHT.
     glm::vec3 getDirection() {
-        if(_type != POINT)
+        if (_type != POINT)
             return _direction;
     }
 
@@ -80,8 +76,6 @@ public:
     glm::vec3 getColor() {
         return _color;
     }
-
 };
 
-
-#endif //A3_LIGHT_HPP
+#endif //FP_LIGHT_HPP

@@ -1,9 +1,5 @@
-//
-// Created by Ben Keefe on 11/30/22.
-//
-
-#ifndef LAB04_STATICOBJECT_H
-#define LAB04_STATICOBJECT_H
+#ifndef FP_STATICOBJECT_H
+#define FP_STATICOBJECT_H
 
 
 #include <glm/glm.hpp>
@@ -14,7 +10,8 @@
 
 class StaticObject {
 public:
-    StaticObject(CSCI441::ModelLoader* model, glm::vec3 position, glm::vec3 scale = glm::vec3(1), GLfloat rotation = 0) {
+    StaticObject(CSCI441::ModelLoader *model, glm::vec3 position, glm::vec3 scale = glm::vec3(1),
+                 GLfloat rotation = 0) {
         _position = position;
         _scale = scale;
         _rotation = rotation;
@@ -28,19 +25,19 @@ public:
     GLfloat _rotation;
     glm::vec3 _axisOfRotation;
     glm::mat4 _modelMtx;
-    CSCI441::ModelLoader* _model;
+    CSCI441::ModelLoader *_model;
 
-    void draw(CSCI441::ShaderProgram* shader) {
+    void draw(CSCI441::ShaderProgram *shader) {
         _modelMtx = glm::translate(glm::mat4(1), _position);
         _modelMtx = glm::rotate(_modelMtx, _rotation, _axisOfRotation);
         _modelMtx = glm::scale(_modelMtx, _scale);
 
-        _model->draw(shader->getShaderProgramHandle(),-1,-1,-1,-1, GL_TEXTURE0);
+        _model->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
     }
 
     void updateRotation(float dTheta) {
         _rotation += dTheta;
-        if(abs(_rotation) > M_PI * 2)
+        if (abs(_rotation) > M_PI * 2)
             _rotation = 0;
     }
 
@@ -50,4 +47,4 @@ public:
 };
 
 
-#endif //LAB04_STATICOBJECT_H
+#endif //FP_STATICOBJECT_H

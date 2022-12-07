@@ -12,26 +12,26 @@ out vec4 fragColorOut;
 //	Classic Perlin 2D Noise
 //	by Stefan Gustavson
 //
-vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
-vec2 fade(vec2 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
+vec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
+vec2 fade(vec2 t) { return t*t*t*(t*(t*6.0-15.0)+10.0); }
 
 float cnoise(vec2 P){
     vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);
     vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);
-    Pi = mod(Pi, 289.0); // To avoid truncation effects in permutation
+    Pi = mod(Pi, 289.0);// To avoid truncation effects in permutation
     vec4 ix = Pi.xzxz;
     vec4 iy = Pi.yyww;
     vec4 fx = Pf.xzxz;
     vec4 fy = Pf.yyww;
     vec4 i = permute(permute(ix) + iy);
-    vec4 gx = 2.0 * fract(i * 0.0243902439) - 1.0; // 1/41 = 0.024...
+    vec4 gx = 2.0 * fract(i * 0.0243902439) - 1.0;// 1/41 = 0.024...
     vec4 gy = abs(gx) - 0.5;
     vec4 tx = floor(gx + 0.5);
     gx = gx - tx;
-    vec2 g00 = vec2(gx.x,gy.x);
-    vec2 g10 = vec2(gx.y,gy.y);
-    vec2 g01 = vec2(gx.z,gy.z);
-    vec2 g11 = vec2(gx.w,gy.w);
+    vec2 g00 = vec2(gx.x, gy.x);
+    vec2 g10 = vec2(gx.y, gy.y);
+    vec2 g01 = vec2(gx.z, gy.z);
+    vec2 g11 = vec2(gx.w, gy.w);
     vec4 norm = 1.79284291400159 - 0.85373472095314 *
     vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));
     g00 *= norm.x;
@@ -49,13 +49,13 @@ float cnoise(vec2 P){
 }
 
 float blur(vec2 p, int level) {
-    if(level == 0)
-        return texture(prevNoise, p).x;
+    if (level == 0)
+    return texture(prevNoise, p).x;
 
     float newVal = 0.0f;
 
-    for(int i = -level; i < level; i++){
-        for(int j = -level; j < level; j++){
+    for (int i = -level; i < level; i++){
+        for (int j = -level; j < level; j++){
             newVal += (1.0/(level*(i*i+1)*(j*j+1))) * texture(prevNoise, p + vec2(i / level, j / level)).x;
         }
     }
@@ -65,7 +65,7 @@ float blur(vec2 p, int level) {
 
 void main() {
     float noiseVal = 0.0f;
-    if(!blurOn) {
+    if (!blurOn) {
         noiseVal = (1.0 + cnoise(perlinCoord)) * 0.5;
     } else {
         noiseVal = blur(samplingCoord, 5);

@@ -13,8 +13,8 @@ void main() {
 
     perlinCoord = vec2(vPos.x, vPos.y) * (screenSize / 91.0);
 
-    if(blurOn)
-        samplingCoord = vec2(vPos.x, vPos.y);
+    if (blurOn)
+    samplingCoord = vec2(vPos.x, vPos.y);
     else
-        samplingCoord = vec2(0);
+    samplingCoord = vec2(0);
 }

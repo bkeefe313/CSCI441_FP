@@ -1,7 +1,7 @@
 #version 410 core
 
 // uniform inputs
-uniform mat4 mvpMatrix;                 // the precomputed Model-View-Projection Matrix
+uniform mat4 mvpMatrix;// the precomputed Model-View-Projection Matrix
 uniform mat4 modelMtx;
 
 //camera position uniform
@@ -11,7 +11,7 @@ uniform sampler2D perlinTex;
 uniform float worldSize;
 
 // attribute inputs
-layout(location = 0) in vec3 vPos;      // the position of this specific vertex in object space
+layout(location = 0) in vec3 vPos;// the position of this specific vertex in object space
 
 out vec3 normal;
 out vec3 pos;
@@ -41,18 +41,18 @@ void main() {
     vec3 lowColor = vec3(0.25, 0.1, 0.0);
     vec3 lowestColor = vec3(0.1, 0.05, 0.4);
 
-    if(height > 0.65)
-        color = highestColor;
-    else if(height > 0.3)
-        color = highColor;
-    else if(height > 0.15)
-        color = highColor;
-    else if(height < -0.65)
-        color = lowestColor;
-    else if(height < -0.25)
-        color = lowColor;
+    if (height > 0.65)
+    color = highestColor;
+    else if (height > 0.3)
+    color = highColor;
+    else if (height > 0.15)
+    color = highColor;
+    else if (height < -0.65)
+    color = lowestColor;
+    else if (height < -0.25)
+    color = lowColor;
     else
-        color = midColor;
+    color = midColor;
 
     pos = vec3(prePos.x, height, prePos.z);
     normal = normalize(vec3(-gradientApprox.x, gradientApprox.y, -gradientApprox.z));

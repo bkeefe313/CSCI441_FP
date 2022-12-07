@@ -1,9 +1,5 @@
-//
-// Created by Ben Keefe on 10/6/22.
-//
-
-#ifndef LAB04_PLAYER_H
-#define LAB04_PLAYER_H
+#ifndef FP_PLAYER_H
+#define FP_PLAYER_H
 
 
 #include <glm/ext/scalar_constants.hpp>
@@ -16,8 +12,8 @@
 /// \desc essntially an object that is controlled by the user, contains all necessary data to render and move around
 class Player {
 public:
-    CSCI441::ModelLoader* _model;
-    CSCI441::ModelLoader* _limbs;
+    CSCI441::ModelLoader *_model;
+    CSCI441::ModelLoader *_limbs;
     glm::vec3 _position;
     glm::vec3 _forward;
     GLfloat _angle;
@@ -31,7 +27,7 @@ public:
         _model = new CSCI441::ModelLoader();
         _limbs = new CSCI441::ModelLoader();
         _position = glm::vec3(0);
-        _forward = glm::vec3(0,0,1);
+        _forward = glm::vec3(0, 0, 1);
         _strafeSpeed = 0;
         _walkSpeed = 0;
         _falling = false;
@@ -41,9 +37,9 @@ public:
 
     /// \desc load model data and set attribute locations
     void initModel(GLint posAttr, GLint normAttr, GLint texAttr) {
-        _model->loadModelFile( "assets/saul.obj" );
+        _model->loadModelFile("assets/saul.obj");
         _model->setAttributeLocations(posAttr, normAttr, texAttr);
-        _limbs->loadModelFile( "assets/limbs.obj" );
+        _limbs->loadModelFile("assets/limbs.obj");
         _limbs->setAttributeLocations(posAttr, normAttr, texAttr);
     }
 
@@ -53,17 +49,17 @@ public:
 
     /// \desc move player based on current strafe and walk speed
     void updatePosition() {
-        if(_falling) {
+        if (_falling) {
             _position += glm::vec3(0, -0.5, 0);
             _angle += 0.05f;
             _axisOfRotation = glm::vec3(rand(), rand(), rand());
             return;
         }
-        glm::vec3 posZ = glm::vec3(0,0,1);
-        if(abs(_strafeSpeed) > 0 || abs(_walkSpeed) > 0) {
+        glm::vec3 posZ = glm::vec3(0, 0, 1);
+        if (abs(_strafeSpeed) > 0 || abs(_walkSpeed) > 0) {
             _angle = (-(float) dirOfCross(_forward, posZ)) * acos(glm::dot(_forward, posZ));
             _limbAngle += 0.01f;
-            if(_limbAngle >= 6.28) {
+            if (_limbAngle >= 6.28) {
                 _limbAngle = 0;
             }
         } else {
@@ -84,20 +80,20 @@ public:
         _falling = true;
     }
 
-    void draw(CSCI441::ShaderProgram* shader) {
+    void draw(CSCI441::ShaderProgram *shader) {
         shader->useProgram();
         CSCI441::setVertexAttributeLocations(shader->getAttributeLocation("vPos"),
                                              shader->getAttributeLocation("vNormal"),
                                              shader->getAttributeLocation("vTexCoord"));
 
-        _model->draw(shader->getShaderProgramHandle(),-1,-1,-1,-1, GL_TEXTURE0);
-        _limbs->draw(shader->getShaderProgramHandle(),-1,-1,-1,-1, GL_TEXTURE0);
+        _model->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
+        _limbs->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
     }
 
     glm::mat4 getModelMatrix() {
         _modelMtx = glm::translate(glm::mat4(1), _position);
         _modelMtx = glm::rotate(_modelMtx, _angle, _axisOfRotation);
-        _modelMtx = glm::rotate(_modelMtx, -glm::pi<GLfloat>()/2, glm::vec3(1,0,0));
+        _modelMtx = glm::rotate(_modelMtx, -glm::pi<GLfloat>() / 2, glm::vec3(1, 0, 0));
         return _modelMtx;
     }
 
@@ -107,4 +103,4 @@ private:
 };
 
 
-#endif //LAB04_PLAYER_H
+#endif //FP_PLAYER_H

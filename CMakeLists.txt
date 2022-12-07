@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(FP)
 set(CMAKE_CXX_STANDARD 17)
-set(SOURCE_FILES main.cpp FPEngine.cpp FPEngine.hpp Player.h ArcballCam.h types/StaticObject.h types/Enemy.h types/PerlinTerrain.h)
+set(SOURCE_FILES main.cpp FPEngine.cpp FPEngine.hpp types/Player.h types/StaticObject.h types/Enemy.h types/PerlinTerrain.h)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 # Windows with MinGW Installations
