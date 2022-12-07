@@ -94,6 +94,7 @@ private:
     bool _noDangerMode = false;
     bool _staticObjectsOn = true;
     bool _superFastMode = false;
+    bool _animateNoiseMode = false;
     std::string _gameOverMessage;
 
     /// \desc the static fixed camera in our world

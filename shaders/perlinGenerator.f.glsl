@@ -3,6 +3,8 @@
 uniform sampler2D prevNoise;
 uniform bool blurOn;
 uniform float screenSize;
+uniform float seed;
+uniform vec2 offset;
 
 in vec2 perlinCoord;
 in vec2 samplingCoord;
@@ -12,13 +14,13 @@ out vec4 fragColorOut;
 //	Classic Perlin 2D Noise
 //	by Stefan Gustavson
 //
-vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, seed);}
 vec2 fade(vec2 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
 
 float cnoise(vec2 P){
     vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);
     vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);
-    Pi = mod(Pi, 289.0); // To avoid truncation effects in permutation
+    Pi = mod(Pi, seed); // To avoid truncation effects in permutation
     vec4 ix = Pi.xzxz;
     vec4 iy = Pi.yyww;
     vec4 fx = Pf.xzxz;
@@ -66,7 +68,7 @@ float blur(vec2 p, int level) {
 void main() {
     float noiseVal = 0.0f;
     if(!blurOn) {
-        noiseVal = (1.0 + cnoise(perlinCoord)) * 0.5;
+        noiseVal = (1.0 + cnoise(perlinCoord + offset)) * 0.5;
     } else {
         noiseVal = blur(samplingCoord, 5);
     }

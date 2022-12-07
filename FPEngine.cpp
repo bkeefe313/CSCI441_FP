@@ -91,6 +91,17 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
             case GLFW_KEY_O:
                 _superFastMode = !_superFastMode;
                 break;
+            case GLFW_KEY_COMMA:
+                _terrain->_seed += 0.5f;
+                _terrain->drawNoiseToFBO();
+                break;
+            case GLFW_KEY_PERIOD:
+                _terrain->_seed -= 0.5f;
+                _terrain->drawNoiseToFBO();
+                break;
+            case GLFW_KEY_I:
+                _animateNoiseMode = !_animateNoiseMode;
+                break;
 
             case GLFW_KEY_LEFT_BRACKET:
                 _camOffset -= 5.0f;
@@ -302,7 +313,7 @@ void FPEngine::_setupBuffers() {
                        _texShaderProgram->getAttributeLocation("vNormal"),
                        _texShaderProgram->getAttributeLocation("vTexCoord"));
 
-    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/WhenTheImposterIsSus.obj");
+    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/suzanne.obj");
     _models[Models::ENEMY]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                                   _texShaderProgram->getAttributeLocation("vNormal"),
                                                   _texShaderProgram->getAttributeLocation("vTexCoord"));
@@ -509,6 +520,12 @@ void FPEngine::_updateScene() {
         _player->_walkSpeed = 2.0f;
     else if(_superFastMode && _player->_walkSpeed < 0)
         _player->_walkSpeed = -2.0f;
+
+    if(_animateNoiseMode) {
+        _terrain->_offset += glm::vec2(0.01f, 0.01f);
+
+        _terrain->drawNoiseToFBO();
+    }
 
     _player->updatePosition();
 

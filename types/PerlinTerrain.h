@@ -14,6 +14,8 @@ class PerlinTerrain {
 public:
     int _res;
     float _size;
+    float _seed;
+    glm::vec2 _offset;
 
     std::vector<glm::vec3> _vertices;
     std::vector<GLushort> _indices;
@@ -47,6 +49,8 @@ public:
         _vao = -1, _vbo = -1, _ibo = -1;
         _res = res;
         _size = size;
+        _seed = 289.0f;
+        _offset = glm::vec2(0, 0);
 
         _noiseShader = new CSCI441::ShaderProgram("shaders/perlinGenerator.v.glsl",
                                                   "shaders/perlinGenerator.f.glsl");
@@ -257,11 +261,13 @@ public:
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _quadIBO );
         glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
 
-        _noiseShader->setProgramUniform("blurOn", false);
         drawNoiseToFBO();
     }
 
     void drawNoiseToFBO() {
+        _noiseShader->setProgramUniform("offset", _offset);
+        _noiseShader->setProgramUniform("blurOn", false);
+        _noiseShader->setProgramUniform("seed", _seed);
         _noiseShader->setProgramUniform(_noiseShader->getUniformLocation("screenSize"), SCREEN_SIZE);
         CSCI441::setVertexAttributeLocations(_noiseShader->getAttributeLocation("vPos"));
 
@@ -270,6 +276,11 @@ public:
 
         //FBO will write end result to a texture!
         glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+
+        glBindTexture(GL_TEXTURE_2D, _noiseTex);
+        glActiveTexture(GL_TEXTURE0);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _noiseTex, 0);
 
         glBindVertexArray(_quadVAO);
 
