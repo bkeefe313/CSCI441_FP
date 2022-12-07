@@ -7,7 +7,9 @@ Final Project: There and Back Again
 
 Project Description:
 This program is a game where you must collect coins and not get hit by the enemies to win.
-It is set at night, so you must use a flashlight to look around.
+It is set at night, so you must use a flashlight to look around. There is terrain generation
+using perlin noise. The enemies and coins are randomly generated. The enemies sit still
+and wait for you to get close, then they chase you.
 
 Usage:
 W - Move Forward
