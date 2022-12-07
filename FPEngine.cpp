@@ -9,7 +9,6 @@
 //*************************************************************************************
 //
 // Public Interface
-
 FPEngine::FPEngine()
         : CSCI441::OpenGLEngine(4, 1, 1280, 720, "FP") {
     _cam = new CSCI441::ArcballCam();
@@ -33,6 +32,7 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
     if (key != GLFW_KEY_UNKNOWN)
         _keys[key] = ((action == GLFW_PRESS) || (action == GLFW_REPEAT));
 
+    // Shift to sprint
     if (key == GLFW_KEY_LEFT_SHIFT) {
         _leftShiftState = action;
     }
@@ -59,54 +59,51 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
                 _player->_strafeSpeed = 0.2f;
                 break;
 
+            // spawns an enemy
             case GLFW_KEY_UP:
                 _spawnEnemy(1);
                 break;
+            // deletes an enemy
             case GLFW_KEY_DOWN:
                 _deleteEnemy();
                 break;
+            // increases terrain height
             case GLFW_KEY_RIGHT:
                 _terrain->_scalingFactor += 5.0f;
                 break;
+            // decreases terrain height
             case GLFW_KEY_LEFT:
                 _terrain->_scalingFactor -= 5.0f;
                 break;
-
+            // shows the noise map
             case GLFW_KEY_P:
                 _noiseOnlyMode = !_noiseOnlyMode;
                 break;
+            // day/night mode
             case GLFW_KEY_L:
                 _daylightMode = !_daylightMode;
                 break;
+            // deletes all enemies
             case GLFW_KEY_M:
                 while (_numEnemies > 0)
                     _deleteEnemy();
                 _noDangerMode = !_noDangerMode;
                 break;
+            // derenders all static objects
             case GLFW_KEY_K:
                 _staticObjectsOn = !_staticObjectsOn;
                 break;
+            // super fast mode
             case GLFW_KEY_O:
                 _superFastMode = !_superFastMode;
                 break;
-
+            // moves camera down
             case GLFW_KEY_LEFT_BRACKET:
                 _camOffset -= 5.0f;
                 break;
+            // moves camera up
             case GLFW_KEY_RIGHT_BRACKET:
                 _camOffset += 5.0f;
-                break;
-
-            case GLFW_KEY_1:
-                break;
-            case GLFW_KEY_2:
-                break;
-            case GLFW_KEY_3:
-                break;
-            case GLFW_KEY_4:
-            case GLFW_KEY_5:
-            case GLFW_KEY_6:
-            case GLFW_KEY_7:
                 break;
 
             default:
@@ -116,6 +113,7 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
 
     if (action == GLFW_RELEASE) {
         switch (key) {
+            // Reset movement
             case GLFW_KEY_W:
             case GLFW_KEY_S:
                 _player->_walkSpeed = 0;
@@ -173,6 +171,7 @@ void FPEngine::_createSkyboxBuffers() {
         GLfloat x, y, z, s, t;
     };
 
+    // create the vertex data
     Vertex skybox[8] = {
             {-1.0f, -1.0f, -1.0f, 0.25f, 0.33f},
             {1.0f,  -1.0f, -1.0f, 0.5f,  0.33f},
@@ -184,13 +183,16 @@ void FPEngine::_createSkyboxBuffers() {
             {-1.0f, 1.0f,  -1.0f, 0.25f, 0.66f}
     };
 
+    // create the index data
     GLushort indices[12] = {0, 1, 6, 3, 4, 2, 5, 0, 7, 6, 5, 4};
 
     _numSkyboxPoints = 12;
 
+    // generate and bind the VAO
     glGenVertexArrays(1, &_vaos[VAOs::SKY]);
     glBindVertexArray(_vaos[VAOs::SKY]);
 
+    // generate and bind the VBO
     GLuint vbods[2];       // 0 - VBO, 1 - IBO
     glGenBuffers(2, vbods);
     glBindBuffer(GL_ARRAY_BUFFER, vbods[0]);
@@ -242,10 +244,13 @@ void FPEngine::_setupOpenGL() {
 
 void FPEngine::_setupShaders() {
 
+    // ambient lighting
     _sun = new Light(glm::vec3(0, 400, 0), glm::vec3(0.0, 0.0, 0.05));
+    // directional lighting
     _flashlight = new Light(glm::vec3(0, 0, 0), glm::normalize(glm::vec3(0, -0.5, 1)), 0.5f,
                             glm::vec3(0.5f, 0.5f, 0.5f));
 
+    // Texture Shader
     _texShaderProgram = new CSCI441::ShaderProgram("./shaders/textureShader.v.glsl",
                                                    "./shaders/textureShader.f.glsl");
     _textureShaderUniformLocations.camPos = _texShaderProgram->getUniformLocation("camPos");
@@ -263,6 +268,7 @@ void FPEngine::_setupShaders() {
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightColor, _flashlight->getColor());
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightCutoff, _flashlight->getAngle());
 
+    // Terrain Shader
     _terrainAbidingTexShader = new CSCI441::ShaderProgram("./shaders/terrainAbidingTex.v.glsl",
                                                           "./shaders/textureShader.f.glsl");
 
@@ -271,7 +277,7 @@ void FPEngine::_setupShaders() {
     _terrainAbidingTexShader->setProgramUniform("flashlightColor", _flashlight->getColor());
     _terrainAbidingTexShader->setProgramUniform("flashlightCutoff", _flashlight->getAngle());
 
-
+    // Gouraud Shader
     _gouraudShaderProgram = new CSCI441::ShaderProgram("./shaders/gouraudShader.v.glsl",
                                                        "./shaders/gouraudShader.f.glsl");
     _gouraudShaderProgramUniformLocations.modelMatrix = _gouraudShaderProgram->getUniformLocation("modelMatrix");
@@ -297,27 +303,30 @@ void FPEngine::_setupShaders() {
     _gouraudShaderProgram->setProgramUniform(_gouraudShaderProgramUniformLocations.lightColor, _sun->getColor());
 }
 
-// _setupBuffers() /////////////////////////////////////////////////////////////
+//*************************************************************************************
 //
 //      Create our VAOs & VBOs. Send vertex data to the GPU for future rendering
 //
 void FPEngine::_setupBuffers() {
-    //create player object
+    // Create player object
     _player = new Player();
     _player->initModel(_texShaderProgram->getAttributeLocation("vPos"),
                        _texShaderProgram->getAttributeLocation("vNormal"),
                        _texShaderProgram->getAttributeLocation("vTexCoord"));
 
+    // Create enemy object
     _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/whenTheImposterIsSus.obj");
     _models[Models::ENEMY]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                                   _texShaderProgram->getAttributeLocation("vNormal"),
                                                   _texShaderProgram->getAttributeLocation("vTexCoord"));
 
+    // Create tree object
     _models[Models::TREE] = new CSCI441::ModelLoader("assets/tree.obj");
     _models[Models::TREE]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                                  _texShaderProgram->getAttributeLocation("vNormal"),
                                                  _texShaderProgram->getAttributeLocation("vTexCoord"));
 
+    // Create coin object
     _models[Models::COIN] = new CSCI441::ModelLoader("assets/coin.obj");
     _models[Models::COIN]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                                  _texShaderProgram->getAttributeLocation("vNormal"),
@@ -325,6 +334,7 @@ void FPEngine::_setupBuffers() {
 
     _createSkyboxBuffers();
 
+    // Create and generate terrain object
     _terrain = new PerlinTerrain(100, WORLD_SIZE);
     _terrain->generateNoiseTexture();
     _terrain->generateBuffers();
@@ -337,29 +347,40 @@ void FPEngine::_setupTextures() {
 }
 
 void FPEngine::_setupScene() {
+    // Set up the camera
     _cam->setLookAtPoint(_player->_position);
     _cam->setTheta(9.0f);
     _cam->setPhi(1.9f);
     _cam->setRadius(60.0f);
     _cam->recomputeOrientation();
 
+    // Set player position
     _player->_position = glm::vec3(WORLD_SIZE / 2, 0, WORLD_SIZE / 2);
+
+    // Set up the flashlight
     _flashlight->_position = _player->_position;
 
+    // Spawns trees and coins
     _populateScene(300, 10);
 
+    // Spawns initial enemy
     _spawnEnemy(1);
 
 }
 
 void FPEngine::_populateScene(int nTrees, int nCoins) {
+    // Tree and coin count
     _numTrees = nTrees;
     _numCoins = nCoins;
+
+    // Create trees in random positions
     for (int i = 0; i < nTrees; i++) {
         glm::vec3 randPos = glm::vec3(rand() % (int) WORLD_SIZE, 0, rand() % (int) WORLD_SIZE);
         randPos = glm::vec3(randPos.x, 0, randPos.z);
         _trees[i] = new StaticObject(_models[Models::TREE], randPos);
     }
+
+    // Create coins in random positions
     for (int i = 0; i < nCoins; i++) {
         glm::vec3 randPos = glm::vec3(rand() % (int) WORLD_SIZE, 0, rand() % (int) WORLD_SIZE);
         randPos = glm::vec3(randPos.x, 0, randPos.z);
@@ -408,10 +429,13 @@ void FPEngine::_cleanupBuffers() {
 
 void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 
+    // Draws noise map
     if (_noiseOnlyMode) {
         _terrain->drawNoiseToScreen();
         return;
     }
+
+    // Day/Night lighting
     if (_daylightMode) {
         _sun->_color = glm::vec3(0.75, 0.75, 0.75);
     } else {
@@ -518,6 +542,7 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
 }
 
 void FPEngine::_updateScene() {
+    // Sprint
     if (_leftShiftState == GLFW_PRESS && _player->_walkSpeed > 0)
         _player->_walkSpeed = 0.8f;
     if (_superFastMode && _player->_walkSpeed > 0)
@@ -527,12 +552,10 @@ void FPEngine::_updateScene() {
 
     _player->updatePosition();
 
-
     _cam->setLookAtPoint(_player->_position + glm::vec3(0, _camOffset, 0));
-
-
     _cam->recomputeOrientation();
 
+    // Updates the direction based on where the camera is facing
     if (abs(_player->_walkSpeed) > 0 || abs(_player->_strafeSpeed) > 0)
         _player->updateDirection(_cam->getPosition());
 
@@ -545,6 +568,7 @@ void FPEngine::_updateScene() {
     if (!_player->_falling)
         _player->_position = glm::vec3(_player->_position.x, 0, _player->_position.z);
 
+    // Enemy AI
     for (int i = 0; i < _numEnemies; i++) {
         if (glm::length(_enemies[i]->_position - _player->_position) < 350.0f) {
             _enemies[i]->calculateTrajectory(_player->_position);
@@ -552,20 +576,23 @@ void FPEngine::_updateScene() {
         }
     }
 
+    // Rotates coins
     for (int i = 0; i < _numCoins; i++) {
         _coins[i]->updateRotation(0.01f);
     }
 
+    // Flashlight follows where the player is facing
     _flashlight->_direction = _player->_forward;
     _flashlight->_position = _player->_position + (1.5f * _player->_forward) + glm::vec3(0, 30, 0);
 
     _checkCollisions();
 
-
+    // Falling of world edge
     if (_player->_position.y < -300) {
         _gameOver = true;
         _gameOverMessage = "YOU DIED";
     }
+    // Collects all coins
     if (_numCoins <= 0) {
         _gameOver = true;
         _gameOverMessage = "YOU WON!";
@@ -579,6 +606,7 @@ void FPEngine::run() {
     //	window will display once and then the program exits.
     while (!glfwWindowShouldClose(_window)) {            // check if the window was instructed to be closed
 
+        // Game Over
         if (_gameOver) {
             std::cout << _gameOverMessage << std::endl;
             glfwSetWindowShouldClose(_window, true);
@@ -618,6 +646,7 @@ void FPEngine::run() {
 }
 
 void FPEngine::_checkCollisions() {
+    // Player vs. Enemy collision
     for (int i = 0; i < _numEnemies; i++) {
         if (length(_enemies[i]->_position - _player->_position) < _enemies[i]->_scale.x) {
             _gameOver = true;
@@ -631,6 +660,7 @@ void FPEngine::_checkCollisions() {
         }
     }
 
+    // Player vs. Tree collision
     for (int i = 0; i < _numTrees; i++) {
         if (length(_trees[i]->_position - _player->_position) < 12) {
             glm::vec3 opposite = _player->_position - _trees[i]->_position;
@@ -638,6 +668,7 @@ void FPEngine::_checkCollisions() {
         }
     }
 
+    // Player vs. Coin collision
     float closest = 9999.9f;
     for (int i = 0; i < _numCoins; i++) {
         if (glm::length(_coins[i]->_position - _player->_position) < closest) {
@@ -656,6 +687,7 @@ void FPEngine::_checkCollisions() {
         }
     }
 
+    // Enemies vs. Tree collision
     for (int i = 0; i < _numEnemies; i++) {
         for (int j = 0; j < _numTrees; j++) {
             if (abs(length(_enemies[i]->_position - _trees[j]->_position)) < 12) {
@@ -669,8 +701,6 @@ void FPEngine::_checkCollisions() {
 //*************************************************************************************
 //
 // Private Helper FUnctions
-
-//// HELPERS
 
 void FPEngine::_computeAndSendTransformationMatrices(CSCI441::ShaderProgram *shaderProgram,
                                                      glm::mat4 modelMatrix, glm::mat4 viewMatrix,

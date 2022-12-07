@@ -10,6 +10,7 @@
 
 class StaticObject {
 public:
+    /// \desc initialize a static object
     StaticObject(CSCI441::ModelLoader *model, glm::vec3 position, glm::vec3 scale = glm::vec3(1),
                  GLfloat rotation = 0) {
         _position = position;
@@ -20,6 +21,7 @@ public:
         _model = model;
     }
 
+    // Variables
     glm::vec3 _position;
     glm::vec3 _scale;
     GLfloat _rotation;
@@ -27,6 +29,7 @@ public:
     glm::mat4 _modelMtx;
     CSCI441::ModelLoader *_model;
 
+    /// \desc render the object
     void draw(CSCI441::ShaderProgram *shader) {
         _modelMtx = glm::translate(glm::mat4(1), _position);
         _modelMtx = glm::rotate(_modelMtx, _rotation, _axisOfRotation);
@@ -35,12 +38,14 @@ public:
         _model->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
     }
 
+    /// \desc rotates the object
     void updateRotation(float dTheta) {
         _rotation += dTheta;
         if (abs(_rotation) > M_PI * 2)
             _rotation = 0;
     }
 
+    /// \desc returns the model matrix
     glm::mat4 getModelMatrix() {
         return _modelMtx;
     }

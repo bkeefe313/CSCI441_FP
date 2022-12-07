@@ -12,6 +12,7 @@
 /// \desc essntially an object that is controlled by the user, contains all necessary data to render and move around
 class Player {
 public:
+    // Variables
     CSCI441::ModelLoader *_model;
     CSCI441::ModelLoader *_limbs;
     glm::vec3 _position;
@@ -49,6 +50,7 @@ public:
 
     /// \desc move player based on current strafe and walk speed
     void updatePosition() {
+        // If the player is falling, update their position and rotation
         if (_falling) {
             _position += glm::vec3(0, -0.5, 0);
             _angle += 0.05f;
@@ -70,16 +72,17 @@ public:
 
     /// \desc change the movement direction from camera position
     void updateDirection(glm::vec3 v) {
-
         _forward = _position - v;
         _forward.y = 0;
         _forward = glm::normalize(_forward);
     }
 
+    /// \desc Falling player
     void fallOffEdge() {
         _falling = true;
     }
 
+    /// \desc render the player
     void draw(CSCI441::ShaderProgram *shader) {
         shader->useProgram();
         CSCI441::setVertexAttributeLocations(shader->getAttributeLocation("vPos"),
@@ -90,6 +93,7 @@ public:
         _limbs->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
     }
 
+    /// \desc get the model matrix for the player
     glm::mat4 getModelMatrix() {
         _modelMtx = glm::translate(glm::mat4(1), _position);
         _modelMtx = glm::rotate(_modelMtx, _angle, _axisOfRotation);

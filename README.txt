@@ -11,13 +11,27 @@ It is set at night, so you must use a flashlight to look around. There is terrai
 using perlin noise. The enemies and coins are randomly generated. The enemies sit still
 and wait for you to get close, then they chase you.
 
-Usage:
+Controls:
 W - Move Forward
 A - Strafe Left
 S - Move Backward
 D - Strafe Right
 Shift - Sprint
 Mouse - Look Around
+
+Arrow Up - Spawn 1 Enemy
+Arrow Down - Delete 1 Enemy
+Arrow Left - Decrease Terrain Height
+Arrow Right - Increase Terrain Height
+
+P - Shows the Noise Map
+L - Daytime mode
+M - Deletes All Enemies
+K - Derenders All Static Objects
+O - Super Speed
+
+Left Bracket - Move Camera Down
+Right Bracket - Move Camera Up
 
 Build Instructions:
 Use the included ArcballCa.hpp in the ./include/CSCI441 folder.

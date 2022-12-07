@@ -8,6 +8,7 @@
 
 class PerlinTerrain {
 public:
+    // Variables
     int _res;
     float _size;
 
@@ -25,6 +26,7 @@ public:
     CSCI441::ShaderProgram *_noiseShader;
     CSCI441::ShaderProgram *_terrainShader;
 
+    /// \desc constructor
     PerlinTerrain(int res, float size) {
         _numTriangles = 0;
         _vao = -1, _vbo = -1, _ibo = -1;
@@ -37,6 +39,7 @@ public:
                                                     "shaders/perlinTerrain.f.glsl");
     }
 
+    /// \desc Renders the terrain
     void drawTerrain(glm::mat4 viewMtx, glm::mat4 projMtx, glm::vec3 flPos, glm::vec3 flDir, glm::vec3 camPos) {
         _terrainShader->useProgram();
         glm::mat4 modelMtx = glm::scale(glm::mat4(1), glm::vec3(1, _scalingFactor, 1));
@@ -58,6 +61,7 @@ public:
 
     }
 
+    /// \desc Creates terrain shaders
     void configTerrainShader(glm::vec3 sunPos, glm::vec3 sunColor, glm::vec3 flColor, GLfloat flAngle) {
         _terrainShader->setProgramUniform("pointLightPos", sunPos);
         _terrainShader->setProgramUniform("pointLightColor", sunColor);
@@ -66,14 +70,12 @@ public:
         _terrainShader->setProgramUniform("worldSize", _size);
     }
 
+    /// \desc Creates the terrain
     void generateBuffers() {
-
         for (int i = 0; i < _res; i++) {
             for (int j = 0; j < _res; j++) {
-
                 glm::vec3 v(((float) i / (float) _res) * _size, 0, ((float) j / (float) _res) * _size);
                 _vertices.push_back(v);
-
             }
         }
 
@@ -114,6 +116,7 @@ public:
         fprintf(stdout, "GENERATED TERRAIN TO HANDLE: %d\n", _vao);
     }
 
+    /// \desc Creates the noise texture
     void setupFBO() {
         glGenFramebuffers(1, &_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
@@ -136,6 +139,7 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    /// \desc Generates the perlin noise texture
     void generateNoiseTexture() {
         setupFBO();
 
@@ -173,6 +177,7 @@ public:
         drawNoiseToFBO();
     }
 
+    /// \desc Draws the noise texture to the FBO
     void drawNoiseToFBO() {
         _noiseShader->setProgramUniform(_noiseShader->getUniformLocation("screenSize"), SCREEN_SIZE);
         CSCI441::setVertexAttributeLocations(_noiseShader->getAttributeLocation("vPos"));
@@ -191,6 +196,7 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    /// \desc Draws the noise to the screen
     void drawNoiseToScreen() {
         _noiseShader->setProgramUniform(_noiseShader->getUniformLocation("screenSize"), SCREEN_SIZE);
         CSCI441::setVertexAttributeLocations(_noiseShader->getAttributeLocation("vPos"));
@@ -202,6 +208,7 @@ public:
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
+
 
     void drawNoiseToScreenWithBlur() {
         _noiseShader->setProgramUniform("blurOn", false);

@@ -9,17 +9,15 @@
 
 class Enemy {
 public:
+    // Initialize the enemy with a model, position, and scale
     Enemy(CSCI441::ModelLoader *model, glm::vec3 position, glm::vec3 scale = glm::vec3(1)) {
         _model = model;
         _position = position;
 
         _scale = scale;
         _heading = glm::vec3(0, 0, 1);
-        _health = 100;
-        _maxHealth = 100;
         _speed = 0.2f;
         _targetPosition = glm::vec3(0);
-        _attackDmg = 1;
         _rotation = 0;
         _axisOfRotation = glm::vec3(0, 1, 0);
         _offset = glm::vec3(0, 1, 0);
@@ -31,14 +29,10 @@ public:
     glm::vec3 _heading;
 
     /// data
-    float _health;
-    float _maxHealth;
     glm::vec3 _targetPosition;
-    float _attackDmg;
     float _speed;
 
     glm::mat4 getModelMatrix() {
-
         _modelMtx = glm::translate(glm::mat4(1), _position + _offset);
         _modelMtx = glm::rotate(_modelMtx, _rotation, _axisOfRotation);
         _modelMtx = glm::scale(_modelMtx, _scale);
@@ -47,16 +41,19 @@ public:
     }
 
     void draw(CSCI441::ShaderProgram *shader) {
+        // Makes the enemy float
         _offset = glm::vec3(0, 1.5f, 0) * _scale.y;
         _model->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
     }
 
     void calculateTrajectory(glm::vec3 target) {
+        // Calculate the heading and rotation to the target
         _targetHeading = glm::normalize(glm::vec3((target - _position).x, 0, (target - _position).z));
         _targetRotation = acos(glm::dot(_initHeading, _targetHeading));
     }
 
     void move() {
+        // rotates enemy to face player
         _rotation = _targetRotation;
 
         _axisOfRotation = glm::cross(_initHeading, _targetHeading);
@@ -66,16 +63,8 @@ public:
         else if (_axisOfRotation.y < 0)
             _heading = glm::vec3(-sin(_rotation), 0, cos(_rotation));
 
+        // moves enemy towards player
         _position += _speed * _heading;
-    }
-
-    void handleCollision(Enemy *other) {
-        this->_scale += glm::log(other->_scale);
-        this->_maxHealth += 100;
-        this->_attackDmg += 1;
-        this->_speed *= 0.9;
-
-        delete (other);
     }
 
 private:
