@@ -1,7 +1,7 @@
 #version 410 core
 
 // uniform inputs
-uniform mat4 mvpMatrix;                 // the precomputed Model-View-Projection Matrix
+uniform mat4 mvpMatrix;// the precomputed Model-View-Projection Matrix
 uniform mat4 vpMatrix;
 uniform mat4 modelMtx;
 
@@ -16,7 +16,7 @@ in vec2 vTexCoord;
 out vec2 texCoord;
 
 // attribute inputs
-layout(location = 0) in vec3 vPos;      // the position of this specific vertex in object space
+layout(location = 0) in vec3 vPos;// the position of this specific vertex in object space
 
 in vec3 vNormal;
 out vec3 normal;

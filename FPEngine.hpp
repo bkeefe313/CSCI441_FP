@@ -4,7 +4,7 @@
 #include <CSCI441/FreeCam.hpp>
 #include <CSCI441/ModelLoader.hpp>
 #include <CSCI441/OpenGLEngine.hpp>
-#include "Player.h"
+#include "types/Player.h"
 #include "include/CSCI441/ArcballCam.hpp"
 #include "types/Enemy.h"
 #include "types/StaticObject.h"
@@ -14,11 +14,11 @@
 
 #define NUM_MAX_ENEMIES 1024
 #define NUM_MAX_STATIC_OBJECTS 1024
-#define NUM_COINS 32
 
 class FPEngine : public CSCI441::OpenGLEngine {
 public:
     FPEngine();
+
     ~FPEngine();
 
     void run() final;
@@ -47,28 +47,38 @@ public:
 
 private:
     void _setupGLFW() final;
+
     void _setupOpenGL() final;
+
     void _setupShaders() final;
+
     void _setupBuffers() final;
+
     void _setupScene() final;
+
     void _setupTextures() final;
 
     void _cleanupBuffers() final;
+
     void _cleanupShaders() final;
 
-    void _computeAndSendMatrixUniforms(CSCI441::ShaderProgram*, glm::mat4, glm::mat4, glm::mat4) const;
     void _computeAndSendTransformationMatrices(CSCI441::ShaderProgram *shaderProgram, glm::mat4 modelMatrix,
                                                glm::mat4 viewMatrix, glm::mat4 projectionMatrix, GLint mvpMtxLocation,
                                                GLint modelMtxLocation, GLint normalMtxLocation);
-    GLuint _loadAndRegisterTexture(const char* FILENAME);
+
+    GLuint _loadAndRegisterTexture(const char *FILENAME);
+
     void _spawnEnemy(int);
+
     void _deleteEnemy();
+
     void _populateScene(int, int);
 
     /// \desc draws everything to the scene from a particular point of view
     /// \param viewMtx the current view matrix for our camera
     /// \param projMtx the current projection matrix for our camera
     void _renderScene(glm::mat4 viewMtx, glm::mat4 projMtx);
+
     /// \desc handles moving our FreeCam as determined by keyboard input
     void _updateScene();
 
@@ -79,7 +89,6 @@ private:
     GLboolean _keys[NUM_KEYS];
 
     GLfloat WORLD_SIZE = 2000.0f;
-    GLfloat _lastSpawnTime = 0.0f;
 
     /// \desc last location of the mouse in window coordinates
     glm::vec2 _mousePosition;
@@ -98,43 +107,42 @@ private:
     std::string _gameOverMessage;
 
     /// \desc the static fixed camera in our world
-    CSCI441::ArcballCam* _cam;
+    CSCI441::ArcballCam *_cam;
     float _camOffset = 20.0f;
 
-    GLuint _vaos[16];
-    GLuint _vbos[16];
-    GLuint _ibos[16];
+    static constexpr GLuint NUM_VAOS = 16;
+    GLuint _vaos[NUM_VAOS];
 
     GLint _numSkyboxPoints;
 
-    GLuint _textures[8];
+    GLuint _textures[1];
 
     void _createSkyboxBuffers();
 
     /// \desc stores the player data, including model, position data, etc
-    Player* _player;
+    Player *_player;
 
-    Enemy* _enemies[NUM_MAX_ENEMIES];
+    Enemy *_enemies[NUM_MAX_ENEMIES];
     GLint _numEnemies;
 
-    StaticObject* _trees[NUM_MAX_STATIC_OBJECTS];
-    StaticObject* _coins[NUM_MAX_STATIC_OBJECTS];
+    StaticObject *_trees[NUM_MAX_STATIC_OBJECTS];
+    StaticObject *_coins[NUM_MAX_STATIC_OBJECTS];
     GLint _numTrees;
     GLint _numCoins;
 
     glm::vec3 _pingDir;
 
-    CSCI441::ModelLoader* _models[4];
+    CSCI441::ModelLoader *_models[4];
 
     /// lights
-    Light* _sun;
-    Light* _flashlight;
+    Light *_sun;
+    Light *_flashlight;
 
-    CSCI441::ShaderProgram* _texShaderProgram = nullptr;
-    CSCI441::ShaderProgram* _gouraudShaderProgram = nullptr;
-    CSCI441::ShaderProgram* _terrainAbidingTexShader = nullptr;
+    CSCI441::ShaderProgram *_texShaderProgram = nullptr;
+    CSCI441::ShaderProgram *_gouraudShaderProgram = nullptr;
+    CSCI441::ShaderProgram *_terrainAbidingTexShader = nullptr;
 
-    PerlinTerrain* _terrain;
+    PerlinTerrain *_terrain;
 
     struct TextureShaderUniformLocations {
         GLint mvpMatrix;
@@ -185,33 +193,13 @@ private:
         GLint vNormal;
     } _gouraudShaderProgramAttributeLocations;
 
-    /// \desc reads text from an external file and stores in a c-string
-    /// \param [in] filename file to read contents from
-    /// \param [out] output uninitialized c-string to write contents to - will allocate memory internally
-    static void _readTextFromFile( const char* filename, char* &output );
-    /// \desc checks GPU Shader logs and prints any messages to the screen
-    /// \param handle Shader or Program handle
-    static void _printLog( GLuint handle );
-    /// \desc creates and compiles a given shader as written in an external file
-    /// \param filename file to read shader from
-    /// \param shaderType type of the shader contained in the file
-    /// \returns shader handle
-    static GLuint _compileShader( const char* filename, GLenum shaderType );
-
-    void _loadControlPointsFromFile(const char* FILENAME, GLuint* numBezierPoints, GLuint* numBezierSurfaces, glm::vec3* &bezierPoints, GLushort* &bezierIndices);
-    void _createBezierPatch();
 
     enum Textures {
         SKYBOX = 0,
-        JERMA = 1,
-        RED = 2,
-        GRASS = 3
     };
 
     enum VAOs {
-        GROUND = 0,
-        SKY = 1,
-        BEZIER = 2
+        SKY = 0,
     };
 
     enum Models {
@@ -220,17 +208,16 @@ private:
         COIN = 2
     };
 
-    glm::vec3 evalBezierCurve(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, GLfloat t);
-
-    glm::vec3 evalSurface(GLfloat u, GLfloat v);
-
     void _checkCollisions();
 
 };
 
-void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods );
+void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+
 void cursor_callback(GLFWwindow *window, double x, double y);
+
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
+
 void scroll_callback(GLFWwindow *window, double x, double y);
 
 #endif // LAB04_LAB04_ENGINE_HPP
