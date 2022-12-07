@@ -20,9 +20,6 @@ Mouse - Look Around
 Build Instructions:
 Use the included ArcballCa.hpp in the ./include/CSCI441 folder.
 
-Notes about bugs, implementation details, etc. if necessary
-
-
 File format read as input:
 We used the .obj file format for all of our models. We used Blender to create some of the models and exported them as .obj files.
 
