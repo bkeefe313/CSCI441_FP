@@ -482,7 +482,7 @@ void FPEngine::_updateScene() {
         _player->_walkSpeed = 0.6f;
 
     _player->updatePosition();
-    _cam->setLookAtPoint(_player->_position + glm::vec3(0, 10.0f, 0));
+    _cam->setLookAtPoint(_player->_position + glm::vec3(0, 20.0f, 0));
     _cam->recomputeOrientation();
 
     if(abs(_player->_walkSpeed) > 0 || abs(_player->_strafeSpeed) > 0)
