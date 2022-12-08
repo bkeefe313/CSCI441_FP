@@ -60,4 +60,4 @@ This assignment was fun to make. We had a lot of fun making this game and we are
 Easter Egg:
 There is a secret terrain in this game. Using the period(.) and comma(,) key, you can increase and decrease the seed.
 To find the secret terrain, you must increase the seed to 300. Then zoom out the camera with scroll and look down. You
-can make it easier to see with the daytime mode (L).
+can make it easier to see with the daytime mode (L) and hiding the static objects with K.
