@@ -196,6 +196,7 @@ private:
 
     enum Textures {
         SKYBOX = 0,
+        SECRET = 1
     };
 
     enum VAOs {

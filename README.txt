@@ -31,6 +31,9 @@ K - Hides All Static Objects
 O - Super Speed
 I - Animate Noise/Terrain
 
+, = decrement noise seed
+. = increment noise seed
+
 Left Bracket - Move Camera Down
 Right Bracket - Move Camera Up
 

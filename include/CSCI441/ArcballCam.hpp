@@ -21,7 +21,7 @@ namespace CSCI441 {
     /// \note camera direction is controlled by setting theta & phi and rotating the camera
     class ArcballCam : public CSCI441::Camera {
     public:
-        explicit ArcballCam(GLfloat minRadius = 2.0f, GLfloat maxRadius = 100.0f) : _minRadius(minRadius), _maxRadius(maxRadius) {}
+        explicit ArcballCam(GLfloat minRadius = 2.0f, GLfloat maxRadius = 10000.0f) : _minRadius(minRadius), _maxRadius(maxRadius) {}
 
         /// \desc converts spherical theta & phi to cartesian x,y,z direction vector
         /// \note sets the camera's position to be on a sphere centered

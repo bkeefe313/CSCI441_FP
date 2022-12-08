@@ -98,11 +98,15 @@ void FPEngine::handleKeyEvent(GLint key, GLint action) {
                 _superFastMode = !_superFastMode;
                 break;
             case GLFW_KEY_COMMA:
-                _terrain->_seed += 0.5f;
+                _terrain->_seed -= 0.5f;
                 _terrain->drawNoiseToFBO();
+                std::cout << "Current seed value is " << _terrain->_seed << std::endl;
+                if(rand() % 10 > 9)
+                    std::cout << "Maybe try seed 300?" << std::endl;
                 break;
             case GLFW_KEY_PERIOD:
-                _terrain->_seed -= 0.5f;
+                _terrain->_seed += 0.5f;
+                std::cout << "Current seed value is " << _terrain->_seed << std::endl;
                 _terrain->drawNoiseToFBO();
                 break;
             case GLFW_KEY_I:
@@ -272,17 +276,11 @@ void FPEngine::_setupShaders() {
     _textureShaderUniformLocations.camPos = _texShaderProgram->getUniformLocation("camPos");
     _textureShaderUniformLocations.pointLightColor = _texShaderProgram->getUniformLocation("pointLightColor");
     _textureShaderUniformLocations.pointLightPos = _texShaderProgram->getUniformLocation("pointLightPos");
-    _textureShaderUniformLocations.flashlightColor = _texShaderProgram->getUniformLocation("flashlightColor");
-    _textureShaderUniformLocations.flashlightDir = _texShaderProgram->getUniformLocation("flashlightDir");
-    _textureShaderUniformLocations.flashlightCutoff = _texShaderProgram->getUniformLocation("flashlightCutoff");
-    _textureShaderUniformLocations.flashlightPos = _texShaderProgram->getUniformLocation("flashlightPos");
     _textureShaderUniformLocations.mvpMatrix = _texShaderProgram->getUniformLocation("mvpMatrix");
     _textureShaderUniformLocations.modelMtx = _texShaderProgram->getUniformLocation("modelMtx");
 
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.pointLightPos, _sun->getPosition());
     _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.pointLightColor, _sun->getColor());
-    _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightColor, _flashlight->getColor());
-    _texShaderProgram->setProgramUniform(_textureShaderUniformLocations.flashlightCutoff, _flashlight->getAngle());
 
     // Terrain Shader
     _terrainAbidingTexShader = new CSCI441::ShaderProgram("./shaders/terrainAbidingTex.v.glsl",
@@ -360,6 +358,7 @@ void FPEngine::_setupBuffers() {
 
 void FPEngine::_setupTextures() {
     _textures[Textures::SKYBOX] = _loadAndRegisterTexture("assets/sky.png");
+    _textures[Textures::SECRET] = _loadAndRegisterTexture("assets/secret.jpg");
 }
 
 void FPEngine::_setupScene() {
@@ -471,9 +470,9 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     _terrainAbidingTexShader->setProgramUniform("flashlightDir", _flashlight->_direction);
     _terrainAbidingTexShader->setProgramUniform("camPos", _cam->getPosition());
     _terrainAbidingTexShader->setProgramUniform("tex", 0);
-    _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
     _terrainAbidingTexShader->setProgramUniform("worldSize", WORLD_SIZE);
     _terrainAbidingTexShader->setProgramUniform("scalingFactor", _terrain->_scalingFactor);
+    _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
 
     //// DRAW ENEMIES ////
     for (int i = 0; i < _numEnemies; i++) {
@@ -481,6 +480,11 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
         _terrainAbidingTexShader->setProgramUniform("wsPos", _enemies[i]->_position);
         glActiveTexture(GL_TEXTURE0 + 1);
         glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+
+        if(_terrain->_seed == 300.0f) {
+            glActiveTexture(GL_TEXTURE0 + 1);
+            glBindTexture(GL_TEXTURE_2D, _terrain->_textures[_terrain->SECRET]);
+        }
 
         _enemies[i]->draw(_terrainAbidingTexShader);
     }
@@ -494,6 +498,11 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
 
+    if(_terrain->_seed == 300.0f) {
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, _terrain->_textures[_terrain->SECRET]);
+    }
+
     _player->draw(_terrainAbidingTexShader);
 
 
@@ -505,7 +514,7 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
                                          _texShaderProgram->getAttributeLocation("vTexCoord"));
 
     glm::mat4 modelMtx = glm::translate(glm::mat4(1.0f), _player->_position);
-    modelMtx = glm::scale(modelMtx, glm::vec3(WORLD_SIZE, WORLD_SIZE, WORLD_SIZE) * 2.0f);
+    modelMtx = glm::scale(modelMtx, glm::vec3(WORLD_SIZE, WORLD_SIZE, WORLD_SIZE));
     _computeAndSendTransformationMatrices(_texShaderProgram, modelMtx, viewMtx, projMtx,
                                           _textureShaderUniformLocations.mvpMatrix,
                                           _textureShaderUniformLocations.modelMtx, -1);
@@ -530,6 +539,11 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
             glActiveTexture(GL_TEXTURE0 + 1);
             glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
 
+            if(_terrain->_seed == 300.0f) {
+                glActiveTexture(GL_TEXTURE0 + 1);
+                glBindTexture(GL_TEXTURE_2D, _terrain->_textures[_terrain->SECRET]);
+            }
+
             _trees[i]->draw(_terrainAbidingTexShader);
         }
         for (int i = 0; i < _numCoins; i++) {
@@ -539,6 +553,11 @@ void FPEngine::_renderScene(glm::mat4 viewMtx, glm::mat4 projMtx) {
             _terrainAbidingTexShader->setProgramUniform("perlinTex", 1);
             glActiveTexture(GL_TEXTURE0 + 1);
             glBindTexture(GL_TEXTURE_2D, _terrain->_noiseTex);
+
+            if(_terrain->_seed == 300.0f) {
+                glActiveTexture(GL_TEXTURE0 + 1);
+                glBindTexture(GL_TEXTURE_2D, _terrain->_textures[_terrain->SECRET]);
+            }
 
             _coins[i]->draw(_terrainAbidingTexShader);
         }

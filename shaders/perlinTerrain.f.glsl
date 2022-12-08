@@ -26,6 +26,7 @@ uniform float flashlightCutoff;
 uniform vec3 flashlightDir;
 uniform mat4 modelMtx;
 uniform vec3 camPos;
+uniform bool secret;
 
 uniform sampler2D snowTex;  const int snow  = 0;
 uniform sampler2D rockyTex; const int rocky = 1;
@@ -34,6 +35,7 @@ uniform sampler2D grassTex; const int grass = 3;
 uniform sampler2D sandTex;  const int sand  = 4;
 uniform sampler2D waterTex; const int water = 5;
 
+uniform sampler2D perlinTex;
 
 // ***** FRAGMENT SHADER INPUT *****
 in float elevation;
@@ -124,6 +126,9 @@ void main() {
         a = texture(grassTex, texCoord);
         texColor = a;
     }
+
+    if(secret)
+        texColor = texture(perlinTex, texCoord);
 
     fragColorOut = vec4(calcLight(pointLightColor, pointLightPos, pos, normal, vec3(0,0,0), texColor.xyz) +
                     calcLight(flashlightColor, flashlightPos, pos, normal, flashlightDir, texColor.xyz), 1);

@@ -90,6 +90,12 @@ public:
                                              shader->getAttributeLocation("vTexCoord"));
 
         _model->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
+
+        if(abs(_walkSpeed) + abs(_strafeSpeed) > 0) {
+            _modelMtx = glm::rotate(_modelMtx, 0.5f*(float)sin(glfwGetTime()), glm::cross(_axisOfRotation, glm::vec3(0, 0, 1)));
+            shader->setProgramUniform("modelMtx", _modelMtx);
+        }
+
         _limbs->draw(shader->getShaderProgramHandle(), -1, -1, -1, -1, GL_TEXTURE0);
     }
 

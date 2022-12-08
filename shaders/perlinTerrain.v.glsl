@@ -4,6 +4,8 @@
 uniform mat4 mvpMatrix;                 // the precomputed Model-View-Projection Matrix
 uniform mat4 modelMtx;
 
+uniform bool secret;
+
 //camera position uniform
 uniform vec3 camPos;
 
@@ -44,6 +46,8 @@ void main() {
 
     elevation = height;
     texCoord = vec2((vPos.x / worldSize) * 64, (vPos.z / worldSize) * 64);
+    if(secret)
+        texCoord = vec2( (vPos.x / worldSize), (vPos.z / worldSize) );
     pos = vec3(prePos.x, height, prePos.z);
     normal = normalize(vec3(-gradientApprox.x, gradientApprox.y, -gradientApprox.z));
 }

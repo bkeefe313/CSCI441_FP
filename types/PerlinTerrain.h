@@ -31,7 +31,7 @@ public:
     CSCI441::ShaderProgram* _noiseShader;
     CSCI441::ShaderProgram* _terrainShader;
 
-    GLuint _textures[6];
+    GLuint _textures[7];
 
 
     enum Textures {
@@ -40,7 +40,8 @@ public:
         ARID = 2,
         GRASS = 3,
         SAND = 4,
-        WATER = 5
+        WATER = 5,
+        SECRET = 6
     };
 
 
@@ -72,9 +73,17 @@ public:
 
         glBindVertexArray(_vao);
 
-        _terrainShader->setProgramUniform( "perlinTex", 0 );
-        glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, _noiseTex );
+        if(_seed != 300.0f){
+            _terrainShader->setProgramUniform("perlinTex", 0);
+            _terrainShader->setProgramUniform("secret", false);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, _noiseTex);
+        } else {
+            _terrainShader->setProgramUniform("perlinTex", SECRET + 1);
+            _terrainShader->setProgramUniform("secret", true);
+            glActiveTexture(GL_TEXTURE1 + SECRET);
+            glBindTexture(GL_TEXTURE_2D, _textures[SECRET]);
+        }
 
         glActiveTexture( GL_TEXTURE1 + SNOW  );
         glBindTexture(   GL_TEXTURE_2D, _textures[SNOW]  );
@@ -107,6 +116,7 @@ public:
         _textures[GRASS] = loadAndRegisterTexture("assets/grass.jpg");
         _textures[SAND] = loadAndRegisterTexture("assets/sand.jpg");
         _textures[WATER] = loadAndRegisterTexture("assets/water.png");
+        _textures[SECRET] = loadAndRegisterTexture("assets/secret.jpg");
 
 
         _terrainShader->setProgramUniform( "snowTex", SNOW + 1   );
@@ -142,6 +152,11 @@ public:
         _terrainShader->setProgramUniform( "waterTex", WATER + 1 );
         glActiveTexture( GL_TEXTURE1 + WATER );
         glBindTexture(   GL_TEXTURE_2D, _textures[WATER] );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+        glActiveTexture( GL_TEXTURE1 + SECRET );
+        glBindTexture(   GL_TEXTURE_2D, _textures[SECRET] );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
