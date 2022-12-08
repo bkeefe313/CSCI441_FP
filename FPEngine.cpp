@@ -161,15 +161,20 @@ void FPEngine::handleCursorPositionEvent(glm::vec2 currMousePosition) {
     _mousePosition = currMousePosition;
 
     int w = 0, h = 0;
-    glfwGetWindowSize(_window, &w, &h);
-    if (_mousePosition.x > w)
-        glfwSetCursorPos(_window, 0, _mousePosition.y);
-    if (_mousePosition.y > h)
-        glfwSetCursorPos(_window, _mousePosition.x, 0);
-    if (_mousePosition.x < 0)
-        glfwSetCursorPos(_window, w, _mousePosition.y);
-    if (_mousePosition.y < 0)
-        glfwSetCursorPos(_window, _mousePosition.x, h);
+    if(!_noiseOnlyMode) {
+        glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwGetWindowSize(_window, &w, &h);
+        if (_mousePosition.x >= w)
+            glfwSetCursorPos(_window, 0, _mousePosition.y);
+        if (_mousePosition.y >= h)
+            glfwSetCursorPos(_window, _mousePosition.x, 0);
+        if (_mousePosition.x <= 0)
+            glfwSetCursorPos(_window, w, _mousePosition.y);
+        if (_mousePosition.y <= 0)
+            glfwSetCursorPos(_window, _mousePosition.x, h);
+    } else {
+        glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
 }
 
 void FPEngine::handleScrollEvent(glm::vec2 offset) {
@@ -236,7 +241,6 @@ void FPEngine::_setupGLFW() {
     glfwSetKeyCallback(_window, keyboard_callback);
     glfwSetMouseButtonCallback(_window, mouse_button_callback);
     glfwSetCursorPosCallback(_window, cursor_callback);
-    glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     glfwSetScrollCallback(_window, scroll_callback);
 
 }
@@ -327,7 +331,7 @@ void FPEngine::_setupBuffers() {
                        _texShaderProgram->getAttributeLocation("vTexCoord"));
 
     // Create enemy object
-    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/whenTheImposterIsSus.obj");
+    _models[Models::ENEMY] = new CSCI441::ModelLoader("assets/WhenTheImposterIsSus.obj");
     _models[Models::ENEMY]->setAttributeLocations(_texShaderProgram->getAttributeLocation("vPos"),
                                                   _texShaderProgram->getAttributeLocation("vNormal"),
                                                   _texShaderProgram->getAttributeLocation("vTexCoord"));
@@ -672,7 +676,7 @@ void FPEngine::_checkCollisions() {
         }
         if (length(_enemies[i]->_position - _player->_position) < 300.0f &&
             abs(glm::dot(glm::normalize(_enemies[i]->_heading - _player->_forward), _player->_forward)) > 0.8f) {
-            _enemies[i]->_speed = 1.3f;
+            _enemies[i]->_speed = 1.8f;
         } else {
             _enemies[i]->_speed = 0.5f;
         }

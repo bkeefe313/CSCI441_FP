@@ -27,14 +27,15 @@ Arrow Right - Increase Terrain Height
 P - Shows the Noise Map
 L - Daytime mode
 M - Deletes All Enemies
-K - Derenders All Static Objects
+K - Hides All Static Objects
 O - Super Speed
+I - Animate Noise/Terrain
 
 Left Bracket - Move Camera Down
 Right Bracket - Move Camera Up
 
 Build Instructions:
-Use the included ArcballCa.hpp in the ./include/CSCI441 folder.
+Use the included ArcballCam.hpp in the ./include/CSCI441 folder.
 
 File format read as input:
 We used the .obj file format for all of our models. We used Blender to create some of the models and exported them as .obj files.
